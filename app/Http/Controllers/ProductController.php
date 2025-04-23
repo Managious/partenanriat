@@ -2,44 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Http\Requests\ProductRequest;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
-    //
-    public function index(){
-    $products = Product::all();
-    return view("products.index", compact("products"));
-    }
-    public function create(){
-        
-        $nextId = 'PROD-' . time();
-        return view('products.create', ['nextId' => $nextId]);
-        //return view("products.create");
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $products = Product::query();
+            return DataTables::of($products)
+                ->addColumn('action', function ($product) {
+                    return '
+                        <button class="btn btn-sm btn-warning edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                    ';
+                })
+                ->make(true);
+        }
+
+        return response()->json([]);
     }
 
     public function store(ProductRequest $request)
     {
-        Product::create($request->validated());
-        return redirect()->route('products.index')->with('success', 'Produit ajouté avec succès.');
+        $validated = $request->validated();
+        Product::create($validated);
+
+        return response()->json(['message' => 'Produit ajouté avec succès']);
     }
 
-    public function edit(Product $product)
+    public function show($id)
     {
-        return view('products.edit', compact('product'));
+        $product = Product::where('product_id', $id)->firstOrFail();
+        return response()->json($product);
     }
 
-    public function update(ProductRequest $request, Product $product)
+    public function update(ProductRequest $request, $id)
     {
+        $product = Product::where('product_id', $id)->firstOrFail();
         $product->update($request->validated());
-        return redirect()->route('products.index')->with('success', 'Produit mis à jour avec succès.');
+
+        return response()->json(['message' => 'Produit mis à jour avec succès']);
     }
 
-    public function destroy(Product $product)
+    public function destroy($id)
     {
+        $product = Product::where('product_id', $id)->firstOrFail();
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Produit supprimé avec succès.');
+
+        return response()->json(['message' => 'Produit supprimé avec succès']);
     }
 }
+

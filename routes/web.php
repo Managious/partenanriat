@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
+
 use App\Http\Controllers\ClientController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,12 +17,8 @@ use App\Http\Controllers\ClientController;
 */
 
 
-Route::resource('products', ProductController::class);
 Route::resource('clients', ClientController::class);
 
-Route::get('/', function () {
-    return redirect()->route('products.index');
-});
 
 Route::get('/{any}', function () {
     return view('app');

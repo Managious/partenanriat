@@ -280,8 +280,12 @@
                 <a href="/application/login">Login</a>
                 <a href="/application/logout">Logout</a>
                 <a href="/application/register">Register</a>
-                @if(request()->is('products*'))
-                    <a href="/products/create" class="create-link">Create Product</a>
+                @if(request()->routeIs('suppliers.*'))
+                    <a href="{{ route('suppliers.create') }}" class="create-link">Add Supplier</a>
+                @elseif(request()->routeIs('products.*'))
+                    <a href="{{ route('products.create') }}" class="create-link">Create Product</a>
+                @elseif(request()->routeIs('courriers.*'))
+                    <a href="{{ route('courriers.create') }}" class="create-link">Add Courrier</a>
                 @endif
             </div>
         </nav>
