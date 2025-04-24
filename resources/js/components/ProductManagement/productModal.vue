@@ -11,13 +11,13 @@
 
                 <div class="modal-body">
                     <form @submit.prevent="submitForm">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="product_id">Product ID</label>
                             <input type="text" id="product_id" v-model="formData.product_id" class="form-control" required />
                             <div v-if="errors.product_id" class="text-danger">
                                 <small>{{ errors.product_id[0] }}</small>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="form-group">
                             <label for="product_name">Product Name</label>
@@ -69,7 +69,16 @@
 
                         <div class="form-group">
                             <label for="product_price">Price</label>
-                            <input type="number" id="product_price" v-model="formData.product_price" class="form-control" required />
+                            <input 
+                                type="number" 
+                                id="product_price" 
+                                v-model="formData.product_price" 
+                                class="form-control" 
+                                required 
+                                min="0" 
+                                step="0.01" 
+                                oninput="validity.valid||(value='');"
+                            />
                             <div v-if="errors.product_price" class="text-danger">
                                 <small>{{ errors.product_price[0] }}</small>
                             </div>
@@ -77,7 +86,16 @@
 
                         <div class="form-group">
                             <label for="product_stock_1">Stock</label>
-                            <input type="number" id="product_stock_1" v-model="formData.product_stock_1" class="form-control" required />
+                            <input 
+                                type="number" 
+                                id="product_stock_1" 
+                                v-model="formData.product_stock_1" 
+                                class="form-control" 
+                                required 
+                                min="0" 
+                                step="1" 
+                                oninput="validity.valid||(value='');"
+                            />
                             <div v-if="errors.product_stock_1" class="text-danger">
                                 <small>{{ errors.product_stock_1[0] }}</small>
                             </div>
@@ -104,14 +122,21 @@ export default {
     data() {
         return {
             formData: {
-                name: '',
-                brand: '',
-                price: '',
-                stock: '',
+                product_id: '',
+                product_name: '',
+                product_brand: '',
+                product_category: '',
+                product_subcategory: '',
+                product_supplier: '',
+                product_cmup: '',
+                product_price: '',
+                product_stock_1: '',
+                // include other product fields as needed
             },
             errors: {},
         };
     },
+
     watch: {
         productData: {
             immediate: true,
@@ -124,7 +149,7 @@ export default {
     },
     methods: {
         async submitForm() {
-            const url = this.isEditMode ? `/api/products/${this.productData.id}` : '/api/products';
+            const url = this.isEditMode ? `/api/products/${this.formData.product_id}`  : '/api/products';
             const method = this.isEditMode ? 'put' : 'post';
             try {
                 await axios[method](url, this.formData);

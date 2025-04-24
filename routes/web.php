@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\ClientController;
+
 
 
 /*
@@ -15,9 +15,6 @@ use App\Http\Controllers\ClientController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-
-Route::resource('clients', ClientController::class);
 
 
 Route::get('/{any}', function () {

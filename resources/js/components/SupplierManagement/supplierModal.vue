@@ -12,13 +12,13 @@
 
                 <div class="modal-body">
                     <form @submit.prevent="submitForm">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="supplier_id">Supplier ID</label>
                             <input type="text" id="supplier_id" v-model="formData.supplier_id" class="form-control" required />
                             <div v-if="errors.supplier_id" class="text-danger">
                                 <small>{{ errors.supplier_id[0] }}</small>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="form-group">
                             <label for="name">Supplier Name</label>

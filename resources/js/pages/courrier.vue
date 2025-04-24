@@ -43,8 +43,8 @@
 import axios from 'axios';
 import $ from 'jquery';
 import 'datatables.net-bs5';
-import courrierModal from "../components/CourrierManagement/courriermodal.vue";
-import deleteCourrier from "../components/CourrierManagement/deletecourrier.vue";
+import courrierModal from "../components/CourrierManagement/courrierModal.vue";
+import deleteCourrier from "../components/CourrierManagement/deleteCourrier.vue";
 
 export default {
     components: {
@@ -64,36 +64,42 @@ export default {
     },
     methods: {
         initializeDataTable() {
-            const vm = this;
+    const vm = this;
 
-            $('#courrierTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: '/api/courriers',
-                    type: 'GET',
-                },
-                columns: [
-                    { data: 'id' },
-                    { data: 'name' },
-                    { data: 'courrier_email' },
-                    { data: 'courrier_phone' },
-                    {
-                        data: 'action',
-                        orderable: false,
-                        searchable: false,
-                    },
-                ],
-                createdRow(row, data) {
-                    $(row).find('.edit-btn').on('click', function () {
-                        vm.showEditModal(data);
-                    });
-                    $(row).find('.delete-btn').on('click', function () {
-                        vm.showDeleteModal(data);
-                    });
-                },
+    $('#courrierTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '/api/courriers',
+            type: 'GET',
+        },
+        columns: [
+            { data: 'id' },
+            { data: 'name' },
+            { data: 'courrier_email' },
+            { data: 'courrier_phone' },
+            {
+                data: null,  // Use null since we're generating the content
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row) {
+                    return `
+                        <button class="btn btn-sm btn-primary edit-btn">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+                    `;
+                }
+            },
+        ],
+        createdRow(row, data) {
+            $(row).find('.edit-btn').on('click', function() {
+                vm.showEditModal(data);
+            });
+            $(row).find('.delete-btn').on('click', function() {
+                vm.showDeleteModal(data);
             });
         },
+    });
+},
         refreshData() {
             $('#courrierTable').DataTable().ajax.reload();
         },

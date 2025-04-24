@@ -3,6 +3,7 @@ import role from "../pages/role.vue";
 import product from "../pages/product.vue";
 import supplier from "../pages/supplier.vue";
 import courrier from "../pages/courrier.vue";
+import Clients from "../pages/ClientManager.vue";
 
 const routes = [
     {
@@ -21,10 +22,14 @@ const routes = [
         component: supplier,
     },
     {
-        path: '/courrier',
+        path: '/courriers',
         name: 'CourrierManagement',
         component: courrier,
-    }
+    },
+    {
+         path: '/clients', 
+         component: Clients 
+    },
 ];
 
 const router = createRouter({

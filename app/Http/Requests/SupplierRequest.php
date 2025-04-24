@@ -33,9 +33,9 @@ class SupplierRequest extends FormRequest
             'created_by' => 'nullable|string',
             'updated_by' => 'nullable|string',
         ];
-        if ($this->isMethod('post')) {
-            $rules['supplier_id'] = 'required|string|max:20|unique:suppliers,supplier_id';
-        }
+        // if ($this->isMethod('post')) {
+        //     $rules['supplier_id'] = 'required|string|max:20|unique:suppliers,supplier_id';
+        // }
         
         return $rules;
     }

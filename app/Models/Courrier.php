@@ -9,6 +9,10 @@ class Courrier extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
     protected $fillable = [
         'name',
         'courrier_email',

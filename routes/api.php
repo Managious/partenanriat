@@ -4,6 +4,7 @@ use App\Http\Controllers\RolesController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CourrierController;
+use App\Http\Controllers\ClientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -56,3 +57,5 @@ Route::prefix('courriers')->group(function () {
         Route::put('/{courrier}', [CourrierController::class, 'update']);
         Route::delete('/{courrier}', [CourrierController::class, 'destroy']);
     });
+
+Route::apiResource('clients', controller: ClientController::class);
