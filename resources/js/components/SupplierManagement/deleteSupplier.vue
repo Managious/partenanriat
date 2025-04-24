@@ -11,7 +11,10 @@
                 </div>
 
                 <div class="modal-body">
-                    <p>Are you sure you want to delete the supplier <strong>{{ supplier.supplier_name }}</strong>?</p>
+                    <p v-if="supplierData">
+                        Are you sure you want to delete the supplier
+                        <strong>{{ supplierData.supplier_name }}</strong>?
+                    </p>
                 </div>
 
                 <div class="modal-footer">
@@ -29,19 +32,32 @@ import axios from 'axios';
 
 export default {
     props: {
-        supplier: Object,
+        supplierData: {
+            type: Object,
+            required: true
+        }
     },
     methods: {
         async deleteSupplier() {
-            try {
-                await axios.delete(`/api/suppliers/${this.supplier.supplier_id}`);
-                this.$emit('refresh');
-                this.closeModal();
-            } catch (error) {
-                console.error('Delete error:', error);
-                alert('An error occurred while deleting the supplier.');
-            }
-        },
+    try {
+        await axios.delete(`/api/suppliers/${this.supplierData.supplier_id}`);
+        this.$emit('refresh'); // This tells the parent component to refresh
+        this.$emit('close');   // Close the modal
+        // Optional: Add a success notification
+        this.$notify({
+            title: 'Success',
+            message: 'Supplier deleted successfully',
+            type: 'success'
+        });
+    } catch (error) {
+        console.error('Delete error:', error);
+        this.$notify({
+            title: 'Error',
+            message: 'Failed to delete supplier',
+            type: 'error'
+        });
+    }
+},
         closeModal() {
             this.$emit('close');
         },

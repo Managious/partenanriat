@@ -70,12 +70,12 @@ class SupplierController extends Controller
         return response()->json(['message' => 'Supplier updated successfully']);
     }
 
-    public function destroy($id)
-    {
-        $supplier = Supplier::where('supplier_id', $id)->firstOrFail();
-        $supplier->delete();
+    public function destroy($supplier_id)
+{
+    $supplier = Supplier::where('supplier_id', $supplier_id)->firstOrFail();
+    $supplier->delete();
 
-        return response()->json(['message' => 'Supplier deleted successfully']);
-    }
+    return response()->json(['message' => 'Supplier deleted successfully']);
+}
 }
 

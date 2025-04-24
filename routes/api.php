@@ -42,13 +42,13 @@ Route::prefix('products')->group(function () {
         Route::delete('/{product}', [ProductController::class, 'destroy']);
     });
 Route::prefix('suppliers')->group(function () {
-        Route::get('/', [SupplierController::class, 'index']);
-        Route::get('/all', [SupplierController::class, 'list']);
-        Route::get('/{supplier}', [SupplierController::class, 'show']);
-        Route::post('/', [SupplierController::class, 'store']);
-        Route::put('/{supplier}', [SupplierController::class, 'update']);
-        Route::delete('/{supplier}', [SupplierController::class, 'destroy']);
-    });
+    Route::get('/', [SupplierController::class, 'index']);
+    Route::get('/all', [SupplierController::class, 'list']);
+    Route::get('/{supplier}', [SupplierController::class, 'show']);
+    Route::post('/', [SupplierController::class, 'store']);
+    Route::put('/{supplier}', [SupplierController::class, 'update']);
+    Route::delete('/{supplier_id}', [SupplierController::class, 'destroy']); // Fixed this line
+});
 Route::prefix('courriers')->group(function () {
         Route::get('/', [CourrierController::class, 'index']);
         Route::get('/all', [CourrierController::class, 'list']);

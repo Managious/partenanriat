@@ -9,13 +9,13 @@
                 <div class="table-responsive">
                     <table id="supplierTable" class="table table-striped table-bordered" style="width: 100%">
                         <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>City</th>
-                            <th>Zone</th>
-                            <th>Action</th>
-                        </tr>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>Zone</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -112,14 +112,20 @@ export default {
             this.isDeleteModalVisible = true;
         },
         async deleteSupplier() {
-            try {
-                await axios.delete(`/api/suppliers/${this.selectedSupplier.supplier_id}`);
-                this.refreshData();
-                this.isDeleteModalVisible = false;
-            } catch (error) {
-                console.error("Error deleting supplier:", error);
-            }
+        try {
+            await axios.delete(`/api/suppliers/${this.selectedSupplier.supplier_id}`);
+            this.refreshData(); // This should reload the DataTable
+            this.isDeleteModalVisible = false;
+            // Optional: Add success feedback
+            alert('Supplier deleted successfully!');
+        } catch (error) {
+            console.error("Error deleting supplier:", error);
+            alert("An error occurred while deleting the supplier.");
         }
+    },
+    refreshData() {
+        $('#supplierTable').DataTable().ajax.reload(null, false); // false keeps current pagination
+    }
     }
 };
 </script>
