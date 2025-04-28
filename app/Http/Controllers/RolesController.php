@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoleRequest;
-use App\Models\Roles;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -12,7 +12,7 @@ class RolesController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $roles = Roles::query();
+            $roles = Role::query();
             return DataTables::of($roles)
                 ->addColumn('action', function ($role) {
                     return '
@@ -30,7 +30,7 @@ class RolesController extends Controller
     public function store(RoleRequest $request)
     {
         $validated = $request->validated();
-        Roles::create($validated);
+        Role::create($validated);
 
         return response()->json(['message' => 'Role created successfully']);
     }
@@ -38,14 +38,14 @@ class RolesController extends Controller
     // Show a specific role (for editing)
     public function show($id)
     {
-        $role = Roles::findOrFail($id);
+        $role = Role::findOrFail($id);
         return response()->json($role);
     }
 
     // Update a role
     public function update(RoleRequest $request, $id)
     {
-        $role = Roles::findOrFail($id);
+        $role = Role::findOrFail($id);
         $role->update($request->validated());
 
         return response()->json(['message' => 'Role updated successfully']);
@@ -54,16 +54,16 @@ class RolesController extends Controller
     // Delete a role
     public function destroy($id)
     {
-        $role = Roles::findOrFail($id);
+        $role = Role::findOrFail($id);
         $role->delete();
 
         return response()->json(['message' => 'Role deleted successfully']);
     }
 
-    // Fetch roles for dropdown in user modal
+    // Fetch Role for dropdown in user modal
     public function list()
     {
-        $roles = Roles::select(['id', 'name'])->get();
+        $roles = Role::select(['id', 'name'])->get();
         return response()->json($roles);
     }
 

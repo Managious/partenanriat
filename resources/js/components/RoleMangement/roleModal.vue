@@ -2,7 +2,6 @@
     <div class="modal-overlay" @click="handleOutsideClick">
         <div class="modal-dialog" @click.stop>
             <div class="modal-content">
-
                 <div class="modal-header">
                     <h5 class="modal-title">{{ isEditMode ? 'Edit Role' : 'Create Role' }}</h5>
                     <button type="button" class="close" @click="closeModal">

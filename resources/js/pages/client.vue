@@ -49,8 +49,8 @@
   import axios from 'axios';
   import $ from 'jquery';
   import 'datatables.net-bs5';
-  import deleteClientModal from '../components/deleteModal.vue';
-  import clientModal from '../components/ClientModal.vue';
+  import deleteClientModal from '../components/ClientManagement/deleteModal.vue';
+  import clientModal from '../components/ClientManagement/clientModal.vue';
   
   export default {
     components: {
