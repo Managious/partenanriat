@@ -84,9 +84,14 @@
           processing: true,
           serverSide: false, 
           ajax: {
-            url: '/api/clients',
-            type: 'GET',
-            dataSrc: '',
+              url: '/api/clients',
+              type: 'GET',
+              beforeSend: function (xhr) {
+                  const token = localStorage.getItem('token');
+                  if (token) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                  }
+              }
           },
           columns: [
             { data: 'id' },
@@ -94,13 +99,7 @@
             { data: 'client_email' },
             { data: 'client_city' },
             {
-              data: null,
-              render: function(data, type, row) {
-                return `
-                  <button class="btn btn-sm btn-warning edit-btn">Edit</button>
-                  <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-                `;
-              },
+              data: 'action',
               orderable: false,
               searchable: false,
             },

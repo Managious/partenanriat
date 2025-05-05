@@ -56,7 +56,7 @@ const handleLogin = async () => {
     isLoading.value = true;
     try {
         await authStore.login({ login: login.value, password: password.value });
-        router.push('/roles');
+        router.push('/');
     } catch (err) {
         alert(err);
         error.value = err.response?.data?.message || 'Login failed';

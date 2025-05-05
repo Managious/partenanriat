@@ -13,9 +13,9 @@ class PermissionController extends Controller
     {
         if($request->ajax())
         {
-            $permission = Permission::query();
-            return DataTables::of($permission)
-                ->addColumn('action', function ($role) {
+            $permissions = Permission::query();
+            return DataTables::of($permissions)
+                ->addColumn('action', function ($permission) {
                     return '
                         <button class="btn btn-sm btn-warning edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-sm btn-danger delete-btn" title="Delete"> <i class="fas fa-trash"></i></span></button>

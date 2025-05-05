@@ -9,11 +9,11 @@
                 <div class="table-responsive">
                     <table id="roleTable" class="table table-striped table-bordered" style="width: 100%">
                         <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Action</th>
-                        </tr>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/axios';
 import $ from 'jquery';
 import 'datatables.net-bs5';
 import roleModal from "../components/RoleMangement/roleModal.vue";
@@ -68,8 +68,14 @@ export default {
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '/api/roles',
+                    url: 'api/roles',
                     type: 'GET',
+                    beforeSend: function (xhr) {
+                        const token = localStorage.getItem('token');
+                        if (token) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                        }
+                    }
                 },
                 columns: [
                     { data: 'id'},
@@ -109,7 +115,7 @@ export default {
         },
         async deleteRole() {
             try {
-                await axios.delete(`/api/roles/${this.selectedRole.id}`);
+                await api.delete(`/roles/${this.selectedRole.id}`);
                 this.refreshData();
                 this.isDeleteModalVisible = false;
             } catch (error) {

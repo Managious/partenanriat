@@ -72,6 +72,12 @@ export default {
                 ajax: {
                     url: '/api/suppliers',
                     type: 'GET',
+                    beforeSend: function (xhr) {
+                        const token = localStorage.getItem('token');
+                        if (token) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                        }
+                    }
                 },
                 columns: [
                     { data: 'supplier_id' },

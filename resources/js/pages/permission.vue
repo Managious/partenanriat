@@ -1,13 +1,13 @@
 <template>
-    <div class="container">
+    <div class="container-fluid px-4">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header  d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Permissions List</h5>
                 <button class="btn btn-primary" @click="showCreateModal">Create Permission</button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="permissionTable" class="table table-striped table-bordered" style="width: 100%">
+                    <table id="permissionTable" class="table table-striped table-bordered">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -15,8 +15,8 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                    <tbody></tbody>
-                </table>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -66,11 +66,20 @@ export default {
             const vm = this;
 
             $('#permissionTable').DataTable({
+                responsive: true,
+                autoWidth: false,
+                scrollX: false,
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '/api/permissions',
+                    url: 'api/permissions',
                     type: 'GET',
+                    beforeSend: function (xhr) {
+                        const token = localStorage.getItem('token');
+                        if (token) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                        }
+                    }
                 },
                 columns: [
                     { data: 'id'},
@@ -104,11 +113,11 @@ export default {
             this.selectedPermission = permission;
             this.isPermissionModalVisible = true;
         },
-        showDeleteModal(role) {
+        showDeleteModal(permission) {
             this.selectedPermission = permission;
             this.isDeleteModalVisible = true;
         },
-        async deleteRole() {
+        async deletePermission() {
             try {
                 await api.delete(`/api/permissions/${this.selectedPermission.id}`);
                 this.refreshData();
@@ -120,3 +129,31 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.btn-primary {
+    margin-bottom: 1rem;
+}
+</style>

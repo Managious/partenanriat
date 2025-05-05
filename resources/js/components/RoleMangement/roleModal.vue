@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/axios';
 export default {
     props: {
         isEditMode: Boolean,
@@ -57,17 +57,18 @@ export default {
     },
     methods: {
         async submitForm() {
-            const url = this.isEditMode ? `/api/roles/${this.roleData.id}` : '/api/roles';
+            const url = this.isEditMode ? `/roles/${this.roleData.id}` : '/roles';
             const method = this.isEditMode ? 'put' : 'post';
             try {
-                await axios[method](url, this.formData);
+                await api[method](url, this.formData);
                 this.$emit('refresh');
                 this.closeModal();
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     this.errors = error.response.data.errors;
                 } else {
-                    alert('Error saving role:', error);
+                    alert('Error saving role:\n' + (error.response?.data?.error || error.message || 'Unknown error'));
+                    console.error('Full error:', error);
                 }
             }
         },

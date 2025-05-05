@@ -11,7 +11,8 @@ class RolesController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
+        if ($request->ajax()) 
+        {
             $roles = Role::query();
             return DataTables::of($roles)
                 ->addColumn('action', function ($role) {
@@ -29,10 +30,16 @@ class RolesController extends Controller
     // Store a new role
     public function store(RoleRequest $request)
     {
-        $validated = $request->validated();
-        Role::create($validated);
-
-        return response()->json(['message' => 'Role created successfully']);
+        try {
+            $validated = $request->validated();
+            Role::create($validated);
+    
+            return response()->json(['message' => 'Role created successfully'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error creating role'
+            ], 500);
+        }
     }
 
     // Show a specific role (for editing)

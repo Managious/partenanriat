@@ -6,6 +6,7 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         user: null,
         token: null,
+        permissions: [],
     }),
 
     actions: {
@@ -15,11 +16,13 @@ export const useAuthStore = defineStore('auth', {
 
                 this.token = response.data.token;
                 this.user = response.data.user;
+                this.permissions = response.data.user.permissions;
 
                 localStorage.setItem('token', this.token);
+                localStorage.setItem('permissions', JSON.stringify(this.permissions));
 
                 api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
-
+                
             }catch (error) {
                 alert('Login failed:', error);
                 throw new Error('Login failed, please try again.');
@@ -47,9 +50,14 @@ export const useAuthStore = defineStore('auth', {
 
         checkAuthentication() {
             const token = localStorage.getItem('token');
+            const permissions = localStorage.getItem('permissions');
+
             if(token) {
                 this.token = token;
                 api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+            }
+            if (permissions) {
+                this.permissions = JSON.parse(permissions);
             }
         },
     },

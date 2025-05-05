@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from "@/stores/authStore";
 
 import login from "../pages/login.vue";
+import home from "../pages/home.vue";
 import role from "../pages/role.vue";
 import permission from "../pages/permission.vue";
 import product from "../pages/product.vue";
@@ -14,6 +15,12 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: login
+    },
+    {
+        path: '/',
+        name: 'Home',
+        component: home, 
+        meta: { requiresAuth: true },
     },
     {
         path: '/roles',
@@ -62,7 +69,9 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const authStore = useAuthStore();
     
-
+    if (!authStore.token) {
+        authStore.checkAuthentication();
+    }
 
     if(to.meta.requiresAuth && !authStore.token) {
         next('/login');
