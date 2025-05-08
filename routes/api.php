@@ -75,7 +75,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{courrier}', [CourrierController::class, 'destroy']);
     });
 
-    Route::apiResource('clients', controller: ClientController::class);
+    Route::prefix('clients')->group(function () {
+        Route::get('/', [ClientController::class, 'index']);
+        Route::post('/', [ClientController::class, 'store']);
+        Route::put('/{client}', [ClientController::class, 'update']);
+        Route::delete('/{client}', [ClientController::class, 'delete']);
+    });
+
 });
 
 

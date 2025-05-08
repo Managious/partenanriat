@@ -32,22 +32,20 @@ export const useAuthStore = defineStore('auth', {
         async logout() {
             try {
                 await api.post('/auth/logout');
-
-                this.user = null;
-                this.token = null;
-
-                localStorage.removeItem('token');
-
-                delete api.defaults.headers.common['Authorization'];
-
-                const router = useRouter();
-                router.push('/login');
-            } catch(error) {
-                alert('Logout failed:', error);
-                throw new Error('Logout failed, please try again.');
+            } catch (error) {
+                console.error('Logout request failed, but continuing with cleanup');
             }
+        
+            this.user = null;
+            this.token = null;
+            this.permissions = [];
+        
+            localStorage.removeItem('token');
+            localStorage.removeItem('permissions');
+        
+            delete api.defaults.headers.common['Authorization'];
         },
-
+        
         checkAuthentication() {
             const token = localStorage.getItem('token');
             const permissions = localStorage.getItem('permissions');

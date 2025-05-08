@@ -9,7 +9,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form @submit.prevent="submitForm">
+                    <form class="form-group">
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" id="name" v-model="formData.name" class="form-control" required />
@@ -20,8 +20,13 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
-                    <button type="button" class="btn btn-secondary" @click="closeModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" :disabled="isSubmitting" @click="submitForm" >
+                        <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        {{ isEditMode ? 'Update' : 'Create' }}
+                    </button>
+                    <button type="button" class="btn btn-secondary" @click="closeModal" :disabled="isSubmitting">
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
@@ -41,6 +46,7 @@ export default {
                 name: '',
             },
             errors: {},
+            isSubmitting: false,
         };
     },
     watch: {
@@ -55,7 +61,10 @@ export default {
     },
     methods: {
         async submitForm() {
-            const url = this.isEditMode ? `/api/permissions/${this.permissionData.id}` : '/api/permissions';
+            this.isSubmitting = true;
+            this.errors = {};
+
+            const url = this.isEditMode ? `/permissions/${this.permissionData.id}` : '/permissions';
             const method = this.isEditMode ? 'put' : 'post';
             try {
                 await api[method](url, this.formData);
@@ -67,6 +76,8 @@ export default {
                 } else {
                     alert('Error saving permission:', error);
                 }
+            }finally {
+                this.isSubmitting = false;
             }
         },
         closeModal() {

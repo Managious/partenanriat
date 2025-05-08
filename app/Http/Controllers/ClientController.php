@@ -1,61 +1,52 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class ClientController extends Controller
 {
-    // API : GET
-    public function index()
-    {
-        return response()->json(Client::all());
+    public function index(Request $request)
+    {   
+        if($request->ajax())
+        {
+            $clients = Client::query();
+            return DataTables::of($clients)
+                ->addColumn('action', function ($client) {
+                    return '
+                        <button class="btn btn-sm btn-warning edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger delete-btn" title="Delete"> <i class="fas fa-trash"></i></span></button>
+                    ';
+                })
+                ->make(true);
+        }
+
+        return response()->json([]);
     }
 
-    // API : POST 
-    public function store(Request $request)
+    public function store(ClientRequest $request)
     {
-        $validated = $request->validate([
-            'client_name' => 'required|string|max:100',
-            'client_email' => 'required|email',
-            'client_phone' => 'required|string|max:20',
-            'client_city' => 'nullable|string|max:50',
-            'client_zone' => 'nullable|string|max:50',
-            'client_type' => 'nullable|string|max:50',
-            'client_adress' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated(); 
+        Client::create($validated);
 
-        $client = Client::create($validated);
-        return response()->json($client, 201); // 201 Created
+        return response()->json(['message' => 'Client created successfully!']);
     }
 
-    // API : GET /
-    public function show(Client $client)
+    public function update(ClientRequest $request, $id)
     {
-        return response()->json($client);
+        $client = Client::findOrFail($id);
+        $client->update($request->validated());
+
+        return response()->json(['message' => 'Client updated successfully!']);
     }
 
-    // API : PUT
-    public function update(Request $request, Client $client)
+    public function destroy($id)
     {
-        $validated = $request->validate([
-            'client_name' => 'required|string|max:100',
-            'client_email' => 'required|email',
-            'client_phone' => 'required|string|max:20',
-            'client_city' => 'nullable|string|max:50',
-            'client_zone' => 'nullable|string|max:50',
-            'client_type' => 'nullable|string|max:50',
-            'client_adress' => 'nullable|string|max:255',
-        ]);
+       $client = Client::findOrFail($id);
+       $client->delete();
 
-        $client->update($validated);
-        return response()->json($client);
-    }
-
-    // API : DELETE
-    public function destroy(Client $client)
-    {
-        $client->delete();
-        return response()->json(['message' => 'Client deleted successfully.']);
+       return response()->json(['message' => 'Client deleted successfully.']);
     }
 }

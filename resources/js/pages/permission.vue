@@ -31,7 +31,7 @@
     />
 
     <delete-permission 
-    v-if="isDeleteModalVisible"
+        v-if="isDeleteModalVisible"
         :permission-data="selectedPermission"
         @close="isDeleteModalVisible = false"
         @confirm="deletePermission" 
@@ -66,9 +66,6 @@ export default {
             const vm = this;
 
             $('#permissionTable').DataTable({
-                responsive: true,
-                autoWidth: false,
-                scrollX: false,
                 processing: true,
                 serverSide: true,
                 ajax: {
@@ -119,7 +116,7 @@ export default {
         },
         async deletePermission() {
             try {
-                await api.delete(`/api/permissions/${this.selectedPermission.id}`);
+                await api.delete(`/permissions/${this.selectedPermission.id}`);
                 this.refreshData();
                 this.isDeleteModalVisible = false;
             } catch (error) {

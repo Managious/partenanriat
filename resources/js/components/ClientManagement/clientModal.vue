@@ -1,44 +1,142 @@
-<script setup>
-const props = defineProps(['visible', 'form', 'isEditing'])
-const emit = defineEmits(['close', 'submit'])
-
-const close = () => {
-  emit('close')
-}
-const onSubmit = () => {
-  emit('submit')
-}
-</script>
-
 <template>
-  <div v-if="visible" class="modal-overlay" @click="handleOutsideClick">
+  <div class="modal-overlay" @click="handleOutsideClick">
     <div class="modal-dialog" @click.stop>
-      <form class="modal-content" @submit.prevent="onSubmit">
+      <form class="modal-content" >
         <div class="modal-header">
-          <h5 class="modal-title">{{ isEditing ? 'Edit Client' : 'Add New Client' }}</h5>
+          <h5 class="modal-title">{{ isEditing ? 'Edit Client' : 'Create Client' }}</h5>
           <button type="button" class="close" @click="close">
             <span>&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <input v-model="form.client_name" required class="form-control mb-2" placeholder="Name" />
-          <input v-model="form.client_email" class="form-control mb-2" placeholder="Email" />
-          <input v-model="form.client_city" class="form-control mb-2" placeholder="City" />
-          <input v-model="form.client_zone" class="form-control mb-2" placeholder="Zone" />
-          <input v-model="form.client_type" class="form-control mb-2" placeholder="Type" />
-          <input v-model="form.client_address" class="form-control mb-2" placeholder="Address" />
-          <input v-model="form.client_phone" class="form-control mb-2" placeholder="Phone" />
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" v-model="formData.name" class="form-control" required />
+            <div v-if="errors.name" class="text-danger">
+              <small>{{ errors.name[0] }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" id="city" v-model="formData.city" class="form-control" required />
+            <div v-if="errors.city" class="text-danger">
+              <small>{{ errors.city[0] }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="zone">Zone</label>
+            <input type="text" id="zone" v-model="formData.zone" class="form-control" required />
+            <div v-if="errors.zone" class="text-danger">
+              <small>{{ errors.zone[0] }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="type">Type</label>
+            <input type="text" id="type" v-model="formData.type" class="form-control" required />
+            <div v-if="errors.type" class="text-danger">
+              <small>{{ errors.type[0] }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" v-model="formData.address" class="form-control" required />
+            <div v-if="errors.address" class="text-danger">
+              <small>{{ errors.address[0] }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" v-model="formData.email" class="form-control" required />
+            <div v-if="errors.email" class="text-danger">
+              <small>{{ errors.email[0] }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" v-model="formData.phone" class="form-control" required />
+            <div v-if="errors.phone" class="text-danger">
+              <small>{{ errors.phone[0] }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="discount">Discount</label>
+            <input type="number" id="discount" v-model="formData.discount" class="form-control" required />
+            <div v-if="errors.discount" class="text-danger">
+              <small>{{ errors.discount[0] }}</small>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">Cancel</button>
-          <button type="submit" class="btn btn-primary">
-            {{ isEditing ? 'Update' : 'Save' }}
+          <button type="button" class="btn btn-primary" :disabled="isSubmitting" @click="submitForm" >
+            <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ isEditMode ? 'Update' : 'Create' }}
+          </button>
+          <button type="button" class="btn btn-secondary" @click="closeModal" :disabled="isSubmitting">
+            Cancel
           </button>
         </div>
       </form>
     </div>
   </div>
 </template>
+<script>
+import api from '@/axios';
+export default {
+    props: {
+        isEditMode: Boolean,
+        clientData: Object,
+    },
+    data() {
+        return {
+            formData: {
+                name: '',
+            },
+            errors: {},
+            isSubmitting: false,
+        };
+    },
+    watch: {
+        clientData: {
+            immediate: true,
+            handler(newValue) {
+                if (this.isEditMode && newValue) {
+                    this.formData = { ...newValue };
+                }
+            },
+        },
+    },
+    methods: {
+        async submitForm() {
+            this.isSubmitting = true;
+            this.errors = {};
+
+            const url = this.isEditMode ? `/clients/${this.clientData.id}` : '/clients';
+            const method = this.isEditMode ? 'put' : 'post';
+            try {
+                await api[method](url, this.formData);
+                this.$emit('refresh');
+                this.closeModal();
+            } catch (error) {
+                if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                } else {
+                    alert('Error saving permission:', error);
+                }
+            }finally {
+                this.isSubmitting = false;
+            }
+        },
+        closeModal() {
+            this.$emit('close');
+        },
+        handleOutsideClick(event) {
+            if (event.target === this.$el) {
+                this.closeModal();
+            }
+        },
+    },
+}
+</script>
 <style scoped>
 .modal-overlay {
     position: fixed;

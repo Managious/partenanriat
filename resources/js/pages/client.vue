@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container-fluid px-4">
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">Clients List</h5>
@@ -7,13 +7,18 @@
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table id="clientTable" class="table table-striped table-bordered" style="width: 100%">
+            <table id="clientTable" class="table table-striped table-bordered">
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>Name</th>
-                  <th>Email</th>
                   <th>City</th>
+                  <th>Zone</th>
+                  <th>Type</th>
+                  <th>Address</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Discount</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -24,80 +29,72 @@
       </div>
     </div>
   
-    <!-- Modal for Add/Edit -->
-    <client-modal
-      :visible="isClientModalVisible"
-      :form="formData"
-      :is-editing="isEditMode"
-      @close="isClientModalVisible = false"
-      @submit="submitClient"
+    <client-modal 
+        v-if="isClientModalVisible"
+        :is-edit-mode="isEditMode"
+        :client-data="selectedClient"
+        @close="isClientModalVisible = false"
+        @refresh="refreshData"
     />
-  
-    <!-- Modal for Delete -->
-    <delete-client-modal
-      v-if="isDeleteModalVisible"
-      :client-data="formData"
-      @close="isDeleteModalVisible = false"
-      @confirm="deleteClient"
+    
+    <delete-client 
+        v-if="isDeleteModalVisible"
+        :client-data="selectedClient"
+        @close="isDeleteModalVisible = false"
+        @confirm="deleteClient"  
     />
-
-
-
-  </template>
+</template>
   
-  <script>
-  import axios from 'axios';
-  import $ from 'jquery';
-  import 'datatables.net-bs5';
-  import deleteClientModal from '../components/ClientManagement/deleteModal.vue';
-  import clientModal from '../components/ClientManagement/clientModal.vue';
-  
-  export default {
-    components: {
-      clientModal,
-      deleteClientModal,
-    },
-    data() {
-      return {
-        isClientModalVisible: false,
-        isDeleteModalVisible: false,
-        isEditMode: false,
-        formData: {
-          client_name: '',
-          client_email: '',
-          client_city: '',
-          client_zone: '',
-          client_type: '',
-          client_address: '',
-          client_phone: '',
-        },
-      };
-    },
-    mounted() {
-      this.initializeDataTable();
-    },
-    methods: {
-      initializeDataTable() {
-        const vm = this;
-  
-        $('#clientTable').DataTable({
+<script>
+import api from '@/axios';
+import $ from 'jquery';
+import 'datatables.net-bs5';
+import clientModal from '../components/ClientManagement/clientModal.vue';
+import deleteClient from '../components/ClientManagement/deleteClient.vue';
+
+export default {
+  components: {
+    clientModal,
+    deleteClient
+  },
+  data() {
+    return {
+      isClientModalVisible: false,
+      isDeleteModalVisible: false,
+      isEditMode: false,
+      selectedClient: null,
+    };
+  },
+  mounted() {
+    this.initializeDataTable();
+  },
+  methods: {
+    initializeDataTable() {
+      const vm = this;
+
+      $('#clientTable').DataTable({
           processing: true,
-          serverSide: false, 
+          serverSide: true,
           ajax: {
-              url: '/api/clients',
-              type: 'GET',
-              beforeSend: function (xhr) {
-                  const token = localStorage.getItem('token');
-                  if (token) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                  }
+            url: 'api/clients',
+            type: 'GET',
+            beforeSend: function (xhr) {
+              const token = localStorage.getItem('token');
+              if (token) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
               }
+            }
           },
           columns: [
-            { data: 'id' },
-            { data: 'client_name' },
-            { data: 'client_email' },
-            { data: 'client_city' },
+            { data: 'id'},
+            { data: 'name' },
+            { data: 'city' },
+            { data: 'zone' },
+            { data: 'type' },
+            { data: 'address' },
+            { data: 'email' },
+            { data: 'phone' },
+            { data: 'discount' },
             {
               data: 'action',
               orderable: false,
@@ -106,81 +103,43 @@
           ],
           createdRow(row, data) {
             $(row).find('.edit-btn').on('click', function () {
-              vm.showEditModal(data);
-            });
-            $(row).find('.delete-btn').on('click', function () {
-              vm.showDeleteModal(data);
-            });
+            vm.showEditModal(data);
+          });
+          $(row).find('.delete-btn').on('click', function () {
+            vm.showDeleteModal(data);
+          });
           },
-        });
-      },
-      refreshData() {
-        $('#clientTable').DataTable().ajax.reload();
-      },
-      showCreateModal() {
-        this.isEditMode = false;
-        this.resetFormData();
-        this.isClientModalVisible = true;
-      },
-      showEditModal(client) {
-        this.isEditMode = true;
-        this.formData = { ...client };
-        this.isClientModalVisible = true;
-      },
-      showDeleteModal(client) {
-        this.formData = { ...client };
-        this.isDeleteModalVisible = true;
-      },
-      resetFormData() {
-        this.formData = {
-          client_name: '',
-          client_email: '',
-          client_city: '',
-          client_zone: '',
-          client_type: '',
-          client_address: '',
-          client_phone: '',
-        };
-      },
-      async submitClient() {
-  const url = this.isEditMode ? `/api/clients/${this.formData.id}` : '/api/clients';
-  const method = this.isEditMode ? 'put' : 'post';
-  
-  try {
-    await axios[method](url, this.formData);
-    this.refreshData();
-    this.isClientModalVisible = false;
-  } catch (error) {
-    if (error.response) {
-      // Server responded with error status
-      console.error('Full error response:', error.response);
-      
-      if (error.response.status === 500) {
-        // Show server error message if available
-        const serverMessage = error.response.data?.message || 'Server error occurred';
-        alert(`Server Error: ${serverMessage}`);
+      });
+    },
+    refreshData() {
+      $('#clientTable').DataTable().ajax.reload();
+    },
+    showCreateModal() {
+      this.isEditMode = false;
+      this.selectedClient = null;
+      this.isClientModalVisible = true;
+    },
+    showEditModal(client) {
+      this.isEditMode = true;
+      this.selectedClient = client;
+      this.isClientModalVisible = true;
+    },
+    showDeleteModal(client) {
+      this.selectedClient = client;
+      this.isDeleteModalVisible = true;
+    },
+    async deleteClient() {
+      try {
+            await api.delete(`/clients/${this.selectedClient.id}`);
+            this.refreshData();
+            this.isDeleteModalVisible = false;
+      } catch (error) {
+        console.error("Error deleting client:", error);
       }
-    } else {
-      console.error('Network/request setup error:', error);
-      alert('Network error occurred');
     }
   }
-},
-      async deleteClient() {
-        try {
-          await axios.delete(`/api/clients/${this.formData.id}`);
-          this.refreshData();
-          this.isDeleteModalVisible = false;
-        } catch (error) {
-          console.error('Error deleting client:', error);
-        }
-      },
-    },
-  };
 
-
-
-
-  </script>
+}
+</script>
   
   

@@ -1,7 +1,7 @@
 <template>
   <nav :class="['sidebar', { collapsed: isCollapsed }]">
     <div class="sidebar-header d-flex justify-content-between align-items-center p-3">
-      <span class="fw-bold" v-if="!isCollapsed">WebDash</span>
+      <span class="fw-bold" v-if="!isCollapsed">Partenariat</span>
       <button class="btn btn-sm" @click="$emit('toggle')">
         <i class="fas fa-bars"></i>
       </button>

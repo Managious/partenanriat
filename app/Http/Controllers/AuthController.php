@@ -32,7 +32,14 @@ class AuthController extends Controller
 
         $user->tokens()->delete();
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $tokenName = $request->header('User-Agent') ?? 'unknown-device';
+
+        $tokenInstance = $user->createToken($tokenName);
+
+        $tokenInstance->accessToken->expires_at = now()->addHours(8);
+        $tokenInstance->accessToken->save();
+
+        $token = $tokenInstance->plainTextToken;
 
         return response()->json([
             'token' => $token,
