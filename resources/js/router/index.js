@@ -10,6 +10,7 @@ import supplier from "../pages/supplier.vue";
 import courrier from "../pages/courrier.vue";
 import client from "../pages/client.vue";
 import ProfileView from '../pages/ProfileView.vue';
+import user from "../pages/user.vue";
 
 const routes = [
     {
@@ -57,6 +58,12 @@ const routes = [
         path: '/clients',
         name: 'ClientManagement', 
         component: client,
+        meta: { requiresAuth: true }, 
+    },
+    {
+        path: '/users',
+        name: 'UserManagement', 
+        component: user,
         meta: { requiresAuth: true }, 
     },
     {
