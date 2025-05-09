@@ -58,5 +58,16 @@ export const useAuthStore = defineStore('auth', {
                 this.permissions = JSON.parse(permissions);
             }
         },
+        // In authStore.js actions:
+        async fetchUser() {
+            try {
+                    const response = await api.get('/auth/user');
+                    this.user = response.data;
+                    return response.data;
+                } catch (error) {
+                    console.error('Failed to fetch user:', error);
+                    throw error;
+            }
+  }
     },
 });

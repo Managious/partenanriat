@@ -34,7 +34,7 @@ const handleLogout = async () => {
 };
 
 const goToProfile = () => {
-  router.push('/'); 
+  router.push('/profile');
 };
 </script>
   

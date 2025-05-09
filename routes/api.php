@@ -7,6 +7,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CourrierController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +31,25 @@ Route::prefix('auth')->group(function() {
     });
 });
 
+// Route::prefix('products')->group(function () {
+//     Route::get('/', [ProductController::class, 'index']);
+//     Route::get('/all', [ProductController::class, 'list']);
+//     Route::get('/{product}', [ProductController::class, 'show']);
+//     Route::post('/', [ProductController::class, 'store']);
+//     Route::put('/{product}', [ProductController::class, 'update']);
+//     Route::delete('/{product}', [ProductController::class, 'destroy']);
+// });
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/change-password', [ProfileController::class, 'changePassword']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Route::get('/profile', [ProfileController::class, 'show']);
+    // Route::put('/profile', [ProfileController::class, 'update']);
 
     Route::prefix('roles')->group(function () {
         Route::get('/', [RolesController::class, 'index']);

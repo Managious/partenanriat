@@ -9,6 +9,7 @@ import product from "../pages/product.vue";
 import supplier from "../pages/supplier.vue";
 import courrier from "../pages/courrier.vue";
 import client from "../pages/client.vue";
+import ProfileView from '../pages/ProfileView.vue';
 
 const routes = [
     {
@@ -58,6 +59,12 @@ const routes = [
         component: client,
         meta: { requiresAuth: true }, 
     },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: ProfileView,
+        meta: { requiresAuth: true }
+      },
 
 ];
 

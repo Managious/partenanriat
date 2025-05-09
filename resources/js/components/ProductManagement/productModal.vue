@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from 'axios';
 export default {
     props: {
         isEditMode: Boolean,
@@ -149,10 +149,10 @@ export default {
     },
     methods: {
         async submitForm() {
-            const url = this.isEditMode ? `/api/products/${this.formData.product_id}`  : '/api/products';
+            const url = this.isEditMode ? `/products/${this.formData.product_id}`  : '/products';
             const method = this.isEditMode ? 'put' : 'post';
             try {
-                await axios[method](url, this.formData);
+                await api[method](url, this.formData);
                 this.$emit('refresh');
                 this.closeModal();
             } catch (error) {
