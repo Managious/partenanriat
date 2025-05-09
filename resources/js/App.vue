@@ -20,7 +20,7 @@ import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Sidebar from '@/components/Layout/Sidebar.vue';
 import Header from '@/components/Layout/Header.vue';
-  
+
 const route = useRoute();
 const isSidebarCollapsed = ref(false);
   

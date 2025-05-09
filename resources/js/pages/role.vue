@@ -35,6 +35,13 @@
         @close="isDeleteModalVisible = false"
         @confirm="deleteRole"
     />
+
+    <role-access 
+        :role="selectedRole"
+        :visible="showPermissionModal"
+        @close="showPermissionModal = false"
+        @updated="fetchRoles"
+    />
 </template>
 
 <script>
@@ -43,11 +50,13 @@ import $ from 'jquery';
 import 'datatables.net-bs5';
 import roleModal from "../components/RoleMangement/roleModal.vue";
 import deleteRole from "../components/RoleMangement/deleteRole.vue";
+import roleAccess from '../components/RoleMangement/roleAccess.vue';
 
 export default {
     components: {
         roleModal,
-        deleteRole
+        deleteRole,
+        roleAccess
     },
     data() {
         return {
@@ -55,6 +64,7 @@ export default {
             isDeleteModalVisible: false,
             isEditMode: false,
             selectedRole: null,
+            showPermissionModal: false,
         };
     },
     mounted() {
@@ -93,6 +103,9 @@ export default {
                     $(row).find('.delete-btn').on('click', function () {
                         vm.showDeleteModal(data);
                     });
+                    $(row).find('.permission-btn').on('click', function () {
+                        vm.showPermissionModalForRole(data);
+                    });
                 },
             });
         },
@@ -112,6 +125,10 @@ export default {
         showDeleteModal(role) {
             this.selectedRole = role;
             this.isDeleteModalVisible = true;
+        },
+        showPermissionModalForRole(role) {
+            this.selectedRole = role;
+            this.showPermissionModal = true;
         },
         async deleteRole() {
             try {

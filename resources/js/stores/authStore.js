@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import api from "@/axios";
-import { useRouter } from "vue-router";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -31,7 +30,9 @@ export const useAuthStore = defineStore('auth', {
 
         async logout() {
             try {
-                await api.post('/auth/logout');
+                    if (this.token) {
+                        await api.post('/auth/logout');
+                    }
             } catch (error) {
                 console.error('Logout request failed, but continuing with cleanup');
             }

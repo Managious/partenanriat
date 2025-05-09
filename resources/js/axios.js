@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { forceLogout  } from '@/composables/auth';
 
 const api = axios.create({
     baseURL: '/api',
@@ -14,5 +15,16 @@ api.interceptors.request.use(config => {
 }, error => {
     return Promise.reject(error);
 });
+
+api.interceptors.response.use(
+    response => response,
+    async error => {
+        if (error.response?.status === 401) {
+            await forceLogout();
+        }
+
+        return Promise.reject(error);
+    }
+);
 
 export default api;

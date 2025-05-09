@@ -50,4 +50,9 @@ class PermissionController extends Controller
 
         return response()->json(['message' => 'Permission deleted successfully!']);
     }
+
+    public function list()
+    {
+        return Permission::all();
+    }
 }

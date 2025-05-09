@@ -29,11 +29,12 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
 
-    Route::middleware('auth:sanctum')->group(function() {
+    Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function() {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 });
 
+<<<<<<< Updated upstream
 // Route::prefix('products')->group(function () {
 //     Route::get('/', [ProductController::class, 'index']);
 //     Route::get('/all', [ProductController::class, 'list']);
@@ -53,6 +54,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Route::get('/profile', [ProfileController::class, 'show']);
     // Route::put('/profile', [ProfileController::class, 'update']);
+=======
+Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
+>>>>>>> Stashed changes
 
     Route::prefix('roles')->group(function () {
         Route::get('/', [RolesController::class, 'index']);
@@ -68,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [PermissionController::class, 'store']);
         Route::put('/{permission}', [PermissionController::class, 'update']);
         Route::delete('/{permission}', [PermissionController::class, 'delete']);
+        Route::get('/list', [PermissionController::class, 'list']);
     });
 
     Route::prefix('products')->group(function () {

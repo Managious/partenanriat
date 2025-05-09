@@ -19,7 +19,8 @@ class RolesController extends Controller
                     return '
                         <button class="btn btn-sm btn-warning edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-sm btn-danger delete-btn" title="Delete"> <i class="fas fa-trash"></i></span></button>
-                    ';
+                        <button class="btn btn-sm btn-secondary permission-btn" title="Permission"> <i class="fas fa-lock"></i></span></button>
+                        ';
                 })
                 ->make(true);
         }
