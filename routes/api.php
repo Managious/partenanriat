@@ -42,12 +42,24 @@ Route::prefix('auth')->group(function() {
 //     Route::put('/{product}', [ProductController::class, 'update']);
 //     Route::delete('/{product}', [ProductController::class, 'destroy']);
 // });
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
 
-    Route::post('/change-password', [ProfileController::class, 'changePassword']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('me')->group(function () {
+        Route::get('/', function (Request $request) {
+            return response()->json([
+                'id' => $request->user()->id,
+                'name' => $request->user()->name,
+                'username' => $request->user()->username,
+                'email' => $request->user()->email,
+                'role' => $request->user()->role->name,
+                'permissions' => $request->user()->getAllPermissions()->pluck('name')
+            ]);
+        });
+        
+        Route::post('/change-password', [ProfileController::class, 'changePassword']);
+    });
 });
 Route::middleware('auth:sanctum')->group(function () {
 
