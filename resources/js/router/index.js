@@ -11,6 +11,7 @@ import courrier from "../pages/courrier.vue";
 import client from "../pages/client.vue";
 import ProfileView from '../pages/ProfileView.vue';
 import user from "../pages/user.vue";
+import order from "../pages/order.vue";
 
 const routes = [
     {
@@ -72,6 +73,12 @@ const routes = [
         component: ProfileView,
         meta: { requiresAuth: true }
       },
+    {
+        path: '/orders',
+        name: 'OrderManagement', 
+        component: order,
+        meta: { requiresAuth: true }, 
+    },
 
 ];
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\CourrierController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrdersController;
 
 use App\Http\Controllers\ProfileController;
 
@@ -32,6 +33,15 @@ Route::prefix('auth')->group(function() {
     Route::middleware('auth:sanctum')->group(function() {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
+});
+
+Route::prefix('orders')->group(function () {
+
+    Route::get('/', [OrdersController::class, 'index']);
+    Route::post('/', [OrdersController::class, 'store']);
+    Route::put('/{order}', [OrdersController::class, 'update']);
+    Route::delete('/{order}', [OrdersController::class, 'destroy']);
+    Route::post('/store-cart', [OrdersController::class, 'storeCart']);
 });
 
 // Route::prefix('products')->group(function () {
