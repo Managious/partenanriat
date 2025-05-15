@@ -8,6 +8,7 @@ use App\Http\Controllers\CourrierController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrdersController;
 
 use App\Http\Controllers\ProfileController;
 
@@ -34,7 +35,19 @@ Route::prefix('auth')->group(function() {
     });
 });
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
+=======
+Route::prefix('orders')->group(function () {
+
+    Route::get('/', [OrdersController::class, 'index']);
+    Route::post('/', [OrdersController::class, 'store']);
+    Route::put('/{order}', [OrdersController::class, 'update']);
+    Route::delete('/{order}', [OrdersController::class, 'destroy']);
+    Route::post('/store-cart', [OrdersController::class, 'storeCart']);
+});
+
+>>>>>>> 15e8350dda7df69424c4d56705b009530b088baf
 // Route::prefix('products')->group(function () {
 //     Route::get('/', [ProductController::class, 'index']);
 //     Route::get('/all', [ProductController::class, 'list']);
@@ -43,12 +56,33 @@ Route::prefix('auth')->group(function() {
 //     Route::put('/{product}', [ProductController::class, 'update']);
 //     Route::delete('/{product}', [ProductController::class, 'destroy']);
 // });
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
 
-    Route::post('/change-password', [ProfileController::class, 'changePassword']);
+// Route::prefix('suppliers')->group(function () {
+//         Route::get('/', [SupplierController::class, 'index']);
+//         Route::get('/all', [SupplierController::class, 'list']);
+//         Route::get('/{supplier}', [SupplierController::class, 'show']);
+//         Route::post('/', [SupplierController::class, 'store']);
+//         Route::put('/{supplier}', [SupplierController::class, 'update']);
+//         Route::delete('/{supplier_id}', [SupplierController::class, 'destroy']); // Fixed this line
+//     });
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('me')->group(function () {
+        Route::get('/', function (Request $request) {
+            return response()->json([
+                'id' => $request->user()->id,
+                'name' => $request->user()->name,
+                'username' => $request->user()->username,
+                'email' => $request->user()->email,
+                'role' => $request->user()->role->name,
+                'permissions' => $request->user()->getAllPermissions()->pluck('name')
+            ]);
+        });
+        
+        Route::post('/change-password', [ProfileController::class, 'changePassword']);
+    });
 });
 Route::middleware('auth:sanctum')->group(function () {
 

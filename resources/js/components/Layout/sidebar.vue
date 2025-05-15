@@ -38,6 +38,7 @@ const links = [
   { title: 'Suppliers', path: '/suppliers', icon: 'fas fa-truck-loading', permission: null },
   { title: 'Courriers', path: '/courriers', icon: 'fas fa-motorcycle', permission: null },
   { title: 'Clients', path: '/clients', icon: 'fas fa-users', permission: null },
+  { title: 'Orders', path: '/orders', icon: 'fas fa-shopping-cart', permission: null },
 ];
 
 const filteredLinks = computed(() =>
