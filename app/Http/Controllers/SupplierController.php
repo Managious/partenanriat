@@ -11,28 +11,28 @@ use Illuminate\Support\Facades\Validator;
 class SupplierController extends Controller
 {
     public function index(Request $request)
-{
-    if ($request->ajax()) {
-        $suppliers = Supplier::select([
-            'supplier_id',
-            'supplier_name',
-            'supplier_city',
-            'supplier_zone'
-        ]);
+    {
+        if ($request->ajax()) {
+            $suppliers = Supplier::select([
+                'id', // Changed from supplier_id
+                'supplier_name',
+                'supplier_city',
+                'supplier_zone'
+            ]);
 
-        return DataTables::of($suppliers)
-            ->addColumn('action', function ($supplier) {
-                return '
-                    <button class="btn btn-sm btn-info edit-btn">Edit</button>
-                    <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-                ';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+            return DataTables::of($suppliers)
+                ->addColumn('action', function ($supplier) {
+                    return '
+                        <button class="btn btn-sm btn-info edit-btn">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+                    ';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return response()->json(['message' => 'Invalid request'], 400);
     }
-
-    return response()->json(['message' => 'Invalid request'], 400);
-}
 
     public function store(Request $request)
     {
@@ -51,9 +51,9 @@ class SupplierController extends Controller
         return response()->json(['message' => 'Supplier created successfully']);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) // Changed parameter name for clarity
     {
-        $supplier = Supplier::where('supplier_id', $id)->firstOrFail();
+        $supplier = Supplier::findOrFail($id); // Changed lookup method
 
         $validator = Validator::make($request->all(), [
             'supplier_name' => 'required|string|max:255',
@@ -70,12 +70,26 @@ class SupplierController extends Controller
         return response()->json(['message' => 'Supplier updated successfully']);
     }
 
-    public function destroy($supplier_id)
-{
-    $supplier = Supplier::where('supplier_id', $supplier_id)->firstOrFail();
-    $supplier->delete();
+    public function destroy($id) // Changed parameter name
+    {
+        $supplier = Supplier::findOrFail($id); // Changed lookup method
+        $supplier->delete();
 
-    return response()->json(['message' => 'Supplier deleted successfully']);
-}
+        return response()->json(['message' => 'Supplier deleted successfully']);
+    }
+
+    public function list()
+    {
+        try {
+            $suppliers = Supplier::all();
+            return response()->json($suppliers);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to fetch suppliers',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
 

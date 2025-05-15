@@ -26,7 +26,7 @@ class ProductRequest extends FormRequest
             'product_brand' => 'nullable|string|max:50',
             'product_category' => 'nullable|string|max:50',
             'product_subcategory' => 'nullable|string|max:50',
-            'product_supplier' => 'required|string|max:20',
+            'product_supplier' => 'required|max:20',
             'product_cmup' => 'required|numeric',
             'product_price' => 'required|numeric',
             'product_location' => 'nullable|string|max:20',

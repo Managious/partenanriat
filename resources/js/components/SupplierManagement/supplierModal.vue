@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/axios';
 
 export default {
     props: {
@@ -86,11 +86,11 @@ export default {
     },
     methods: {
         async submitForm() {
-            const url = this.isEditMode ? `/api/suppliers/${this.supplierData.supplier_id}` : '/api/suppliers';
+            const url = this.isEditMode ? `/suppliers/${this.supplierData.id}` : '/suppliers';
             const method = this.isEditMode ? 'put' : 'post';
 
             try {
-                await axios[method](url, this.formData);
+                await api[method](url, this.formData);
                 this.$emit('refresh');
                 this.closeModal();
             } catch (error) {
