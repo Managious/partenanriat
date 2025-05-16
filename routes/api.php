@@ -9,7 +9,6 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdersController;
-
 use App\Http\Controllers\ProfileController;
 
 use Illuminate\Http\Request;
@@ -34,10 +33,6 @@ Route::prefix('auth')->group(function() {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 });
-
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 Route::prefix('orders')->group(function () {
 
     Route::get('/', [OrdersController::class, 'index']);
@@ -46,59 +41,28 @@ Route::prefix('orders')->group(function () {
     Route::delete('/{order}', [OrdersController::class, 'destroy']);
     Route::post('/store-cart', [OrdersController::class, 'storeCart']);
 });
-
->>>>>>> 15e8350dda7df69424c4d56705b009530b088baf
-// Route::prefix('products')->group(function () {
-//     Route::get('/', [ProductController::class, 'index']);
-//     Route::get('/all', [ProductController::class, 'list']);
-//     Route::get('/{product}', [ProductController::class, 'show']);
-//     Route::post('/', [ProductController::class, 'store']);
-//     Route::put('/{product}', [ProductController::class, 'update']);
-//     Route::delete('/{product}', [ProductController::class, 'destroy']);
-// });
-
-// Route::prefix('suppliers')->group(function () {
-//         Route::get('/', [SupplierController::class, 'index']);
-//         Route::get('/all', [SupplierController::class, 'list']);
-//         Route::get('/{supplier}', [SupplierController::class, 'show']);
-//         Route::post('/', [SupplierController::class, 'store']);
-//         Route::put('/{supplier}', [SupplierController::class, 'update']);
-//         Route::delete('/{supplier_id}', [SupplierController::class, 'destroy']); // Fixed this line
-//     });
-
-
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::prefix('me')->group(function () {
-        Route::get('/', function (Request $request) {
-            return response()->json([
-                'id' => $request->user()->id,
-                'name' => $request->user()->name,
-                'username' => $request->user()->username,
-                'email' => $request->user()->email,
-                'role' => $request->user()->role->name,
-                'permissions' => $request->user()->getAllPermissions()->pluck('name')
-            ]);
-        });
-        
-        Route::post('/change-password', [ProfileController::class, 'changePassword']);
-    });
-});
-Route::middleware('auth:sanctum')->group(function () {
-
-    // Route::get('/profile', [ProfileController::class, 'show']);
-    // Route::put('/profile', [ProfileController::class, 'update']);
-=======
 Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
->>>>>>> Stashed changes
+
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::post('/', [UserController::class, 'store']);
+        Route::put('/{user}', [UserController::class, 'update']);
+        Route::delete('/{user}', [UserController::class, 'destroy']);
+    });
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'show']);
+        //Route::put('/profile', [ProfileController::class, 'update']);
+    });
 
     Route::prefix('roles')->group(function () {
         Route::get('/', [RolesController::class, 'index']);
         Route::get('/all', [RolesController::class, 'list']);
-        Route::get('/{role}', [RolesController::class, 'show']);
         Route::post('/', [RolesController::class, 'store']);
         Route::put('/{role}', [RolesController::class, 'update']);
         Route::delete('/{role}', [RolesController::class, 'destroy']);
+        Route::get('/{role}/permissions', [RolesController::class, 'permissions']);
+        Route::post('/{id}/permissions', [RolesController::class, 'savePermissions']);
     });
 
     Route::prefix('permissions')->group(function () {
@@ -141,13 +105,6 @@ Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
         Route::post('/', [ClientController::class, 'store']);
         Route::put('/{client}', [ClientController::class, 'update']);
         Route::delete('/{client}', [ClientController::class, 'delete']);
-    });
-
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index']);
-        Route::post('/', [UserController::class, 'store']);
-        Route::put('/{user}', [UserController::class, 'update']);
-        Route::delete('/{user}', [UserController::class, 'destroy']);
     });
 
 });

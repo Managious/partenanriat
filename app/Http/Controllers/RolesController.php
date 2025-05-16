@@ -28,7 +28,6 @@ class RolesController extends Controller
         return response()->json([]);
     }
 
-    // Store a new role
     public function store(RoleRequest $request)
     {
         try {
@@ -43,14 +42,6 @@ class RolesController extends Controller
         }
     }
 
-    // Show a specific role (for editing)
-    public function show($id)
-    {
-        $role = Role::findOrFail($id);
-        return response()->json($role);
-    }
-
-    // Update a role
     public function update(RoleRequest $request, $id)
     {
         $role = Role::findOrFail($id);
@@ -59,7 +50,6 @@ class RolesController extends Controller
         return response()->json(['message' => 'Role updated successfully']);
     }
 
-    // Delete a role
     public function destroy($id)
     {
         $role = Role::findOrFail($id);
@@ -68,11 +58,29 @@ class RolesController extends Controller
         return response()->json(['message' => 'Role deleted successfully']);
     }
 
-    // Fetch Role for dropdown in user modal
     public function list()
     {
         $roles = Role::select(['id', 'name'])->get();
         return response()->json($roles);
+    }
+
+    public function permissions($id)
+    {
+        $role = Role::with('permissions')->findOrFail($id);
+        return $role->permissions; 
+    }
+
+    public function savePermissions(Request $request, $roleId)
+    {
+        $request->validate([
+            'permission_ids' => 'required|array',
+            'permission_ids.*' => 'exists:permissions,id',
+        ]);
+
+        $role = Role::findOrFail($roleId);
+        $role->permissions()->sync($request->permission_ids);
+
+        return response()->json(['message' => 'Permissions updated successfully.']);
     }
 
 }

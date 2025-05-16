@@ -37,10 +37,9 @@
     />
 
     <role-access 
-        :role="selectedRole"
-        :visible="showPermissionModal"
+        v-if="showPermissionModal"
+        :role-data="selectedRole"
         @close="showPermissionModal = false"
-        @updated="fetchRoles"
     />
 </template>
 
