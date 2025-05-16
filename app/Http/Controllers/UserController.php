@@ -13,15 +13,14 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $users = User::select([
-                'id', 'name', 'username', 'email', 'role_id', 'is_active'
-            ])->with('role');
+            $users = User::query()->with('role');
 
             return DataTables::of($users)
+                ->addColumn('role_name', fn($user) => $user->role->name ?? '-')
                 ->addColumn('action', function ($user) {
                     return '
-                        <button class="btn btn-sm btn-info edit-btn">Edit</button>
-                        <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+                        <button class="btn btn-sm btn-warning edit-btn"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger delete-btn"><i class="fas fa-trash"></i></button>
                     ';
                 })
                 ->rawColumns(['action'])

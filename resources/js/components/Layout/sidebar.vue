@@ -32,6 +32,7 @@ const { hasPermission } = usePermissions();
 
 const links = [
   { title: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt', permission: null },
+  { title: 'Users', path: '/users', icon: 'fas fa-user', permission: null },
   { title: 'Roles', path: '/roles', icon: 'fas fa-user-shield', permission: null },
   { title: 'Permissions', path: '/permissions', icon: 'fas fa-lock', permission: null },
   { title: 'Products', path: '/products', icon: 'fas fa-box', permission: null },

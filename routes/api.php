@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,36 +33,6 @@ Route::prefix('auth')->group(function() {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 });
-<<<<<<< HEAD
-Route::prefix('orders')->group(function () {
-=======
-
-Route::prefix('suppliers')->group(function () {
-        Route::get('/', [SupplierController::class, 'index']);
-        Route::get('/all', [SupplierController::class, 'list']);
-        Route::get('/{supplier}', [SupplierController::class, 'show']);
-        Route::post('/', [SupplierController::class, 'store']);
-        Route::put('/{supplier}', [SupplierController::class, 'update']);
-        Route::delete('/{supplier_id}', [SupplierController::class, 'destroy']);
-    });
->>>>>>> f46b8e25a16f464a9e671c438580e98f8892faa0
-
-Route::prefix('products')->group(function () {
-        Route::get('/', [ProductController::class, 'index']);
-        Route::get('/all', [ProductController::class, 'list']);
-        Route::get('/{product}', [ProductController::class, 'show']);
-        Route::post('/', [ProductController::class, 'store']);
-        Route::put('/{product}', [ProductController::class, 'update']);
-        Route::delete('/{product}', [ProductController::class, 'destroy']);
-    });
-
-Route::prefix('clients')->group(function () {
-        Route::get('/', [ClientController::class, 'index']);
-        Route::post('/', [ClientController::class, 'store']);
-        Route::put('/{client}', [ClientController::class, 'update']);
-        Route::delete('/{client}', [ClientController::class, 'delete']);
-    });
-
 Route::prefix('orders')->group(function () {
     Route::get('/', [OrdersController::class, 'index']);
     Route::post('/', [OrdersController::class, 'store']);
@@ -69,7 +40,6 @@ Route::prefix('orders')->group(function () {
     Route::delete('/{order}', [OrdersController::class, 'destroy']);
     Route::post('/store-cart', [OrdersController::class, 'storeCart']);
 });
-<<<<<<< HEAD
 Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
 
     Route::prefix('users')->group(function () {
@@ -84,27 +54,6 @@ Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
         //Route::put('/profile', [ProfileController::class, 'update']);
     });
 
-=======
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::prefix('me')->group(function () {
-        Route::get('/', function (Request $request) {
-            return response()->json([
-                'id' => $request->user()->id,
-                'name' => $request->user()->name,
-                'username' => $request->user()->username,
-                'email' => $request->user()->email,
-                'role' => $request->user()->role->name,
-                'permissions' => $request->user()->getAllPermissions()->pluck('name')
-            ]);
-        });
-        
-        Route::post('/change-password', [ProfileController::class, 'changePassword']);
-    });
-});
-
-Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
->>>>>>> f46b8e25a16f464a9e671c438580e98f8892faa0
     Route::prefix('roles')->group(function () {
         Route::get('/', [RolesController::class, 'index']);
         Route::get('/all', [RolesController::class, 'list']);
@@ -123,23 +72,23 @@ Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
         Route::get('/list', [PermissionController::class, 'list']);
     });
 
-    // Route::prefix('products')->group(function () {
-    //     Route::get('/', [ProductController::class, 'index']);
-    //     Route::get('/all', [ProductController::class, 'list']);
-    //     Route::get('/{product}', [ProductController::class, 'show']);
-    //     Route::post('/', [ProductController::class, 'store']);
-    //     Route::put('/{product}', [ProductController::class, 'update']);
-    //     Route::delete('/{product}', [ProductController::class, 'destroy']);
-    // });
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index']);
+        Route::get('/all', [ProductController::class, 'list']);
+        Route::get('/{product}', [ProductController::class, 'show']);
+        Route::post('/', [ProductController::class, 'store']);
+        Route::put('/{product}', [ProductController::class, 'update']);
+        Route::delete('/{product}', [ProductController::class, 'destroy']);
+    });
 
-    // Route::prefix('suppliers')->group(function () {
-    //     Route::get('/', [SupplierController::class, 'index']);
-    //     Route::get('/all', [SupplierController::class, 'list']);
-    //     Route::get('/{supplier}', [SupplierController::class, 'show']);
-    //     Route::post('/', [SupplierController::class, 'store']);
-    //     Route::put('/{supplier}', [SupplierController::class, 'update']);
-    //     Route::delete('/{supplier_id}', [SupplierController::class, 'destroy']);
-    // });
+    Route::prefix('suppliers')->group(function () {
+        Route::get('/', [SupplierController::class, 'index']);
+        Route::get('/all', [SupplierController::class, 'list']);
+        Route::get('/{supplier}', [SupplierController::class, 'show']);
+        Route::post('/', [SupplierController::class, 'store']);
+        Route::put('/{supplier}', [SupplierController::class, 'update']);
+        Route::delete('/{supplier_id}', [SupplierController::class, 'destroy']); // Fixed this line
+    });
     
     Route::prefix('courriers')->group(function () {
         Route::get('/', [CourrierController::class, 'index']);
@@ -150,23 +99,13 @@ Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
         Route::delete('/{courrier}', [CourrierController::class, 'destroy']);
     });
 
-    // Route::prefix('clients')->group(function () {
-    //     Route::get('/', [ClientController::class, 'index']);
-    //     Route::post('/', [ClientController::class, 'store']);
-    //     Route::put('/{client}', [ClientController::class, 'update']);
-    //     Route::delete('/{client}', [ClientController::class, 'delete']);
-    // });
-
-<<<<<<< HEAD
-});
-
-
-=======
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index']);
-        Route::post('/', [UserController::class, 'store']);
-        Route::put('/{user}', [UserController::class, 'update']);
-        Route::delete('/{user}', [UserController::class, 'destroy']);
+    Route::prefix('clients')->group(function () {
+        Route::get('/', [ClientController::class, 'index']);
+        Route::post('/', [ClientController::class, 'store']);
+        Route::put('/{client}', [ClientController::class, 'update']);
+        Route::delete('/{client}', [ClientController::class, 'delete']);
     });
+
 });
->>>>>>> f46b8e25a16f464a9e671c438580e98f8892faa0
+
+

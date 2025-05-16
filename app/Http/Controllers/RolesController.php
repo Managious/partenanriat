@@ -18,8 +18,8 @@ class RolesController extends Controller
                 ->addColumn('action', function ($role) {
                     return '
                         <button class="btn btn-sm btn-warning edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger delete-btn" title="Delete"> <i class="fas fa-trash"></i></span></button>
-                        <button class="btn btn-sm btn-secondary permission-btn" title="Permission"> <i class="fas fa-lock"></i></span></button>
+                        <button class="btn btn-sm btn-danger delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-sm btn-secondary permission-btn" title="Permission"><i class="fas fa-lock"></i></button>
                         ';
                 })
                 ->make(true);
@@ -73,7 +73,7 @@ class RolesController extends Controller
     public function savePermissions(Request $request, $roleId)
     {
         $request->validate([
-            'permission_ids' => 'required|array',
+            'permission_ids' => 'present|array',
             'permission_ids.*' => 'exists:permissions,id',
         ]);
 

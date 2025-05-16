@@ -10,36 +10,18 @@
             <button type="button" class="close-btn" @click="closeModal">&times;</button>
           </div>
 
-          <!-- Search -->
           <div class="search-box">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search permissions..."
-              v-model="search"
-            />
+            <input type="text" class="form-control" placeholder="Search permissions..." v-model="search" />
           </div>
 
-          <!-- Body -->
-          <div class="modal-body">
-            <!-- Assigned -->
+          <div class="modal-body scrollable-body">
             <div class="permissions-group">
-              <h6 class="group-title">✅ Assigned Permissions</h6>
+              <h6 class="group-title">Assigned Permissions</h6>
               <div v-for="(permissions, group) in filteredGroupedAssigned" :key="'assigned-' + group" class="permission-section">
                 <div class="section-title">{{ group.toUpperCase() }}</div>
                 <div class="permissions-list">
-                  <div
-                    v-for="permission in permissions"
-                    :key="permission.id"
-                    class="form-check"
-                  >
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      :id="'perm-' + permission.id"
-                      :value="permission.id"
-                      v-model="selectedPermissions"
-                    />
+                  <div v-for="permission in permissions" :key="permission.id" class="form-check" >
+                    <input class="form-check-input" type="checkbox" :id="'perm-' + permission.id" :value="permission.id" v-model="selectedPermissions" />
                     <label class="form-check-label" :for="'perm-' + permission.id">
                       {{ permission.name }}
                     </label>
@@ -50,24 +32,13 @@
 
             <hr />
 
-            <!-- Unassigned -->
             <div class="permissions-group">
-              <h6 class="group-title">❌ Unassigned Permissions</h6>
+              <h6 class="group-title">Unassigned Permissions</h6>
               <div v-for="(permissions, group) in filteredGroupedUnassigned" :key="'unassigned-' + group" class="permission-section">
                 <div class="section-title">{{ group.toUpperCase() }}</div>
                 <div class="permissions-list">
-                  <div
-                    v-for="permission in permissions"
-                    :key="permission.id"
-                    class="form-check"
-                  >
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      :id="'perm-' + permission.id"
-                      :value="permission.id"
-                      v-model="selectedPermissions"
-                    />
+                  <div v-for="permission in permissions" :key="permission.id" class="form-check">
+                    <input class="form-check-input" type="checkbox" :id="'perm-' + permission.id" :value="permission.id" v-model="selectedPermissions" />
                     <label class="form-check-label" :for="'perm-' + permission.id">
                       {{ permission.name }}
                     </label>
@@ -77,10 +48,23 @@
             </div>
           </div>
 
-          <!-- Footer -->
-          <div class="modal-footer">
-            <button class="btn btn-secondary" @click="closeModal">Cancel</button>
-            <button class="btn btn-primary" @click="savePermissions">Save</button>
+          <div class="modal-footer flex-column align-items-start">
+              <transition name="fade">
+                <div v-if="message" class="alert alert-success w-100 mb-2 p-2" style="font-size: 0.9rem;">
+                  {{ message }}
+                </div>
+              </transition>
+
+              <transition name="fade">
+                <div v-if="errorMessage" class="alert alert-danger w-100 mb-2 p-2" style="font-size: 0.9rem;">
+                  {{ errorMessage }}
+                </div>
+              </transition>
+
+              <div class="w-100 d-flex justify-content-end gap-2">
+                <button class="btn btn-secondary" @click="closeModal">Cancel</button>
+                <button class="btn btn-primary" @click="savePermissions">Save</button>
+              </div>
           </div>
 
         </div>
@@ -103,7 +87,9 @@ export default {
     return {
       allPermissions: [],
       selectedPermissions: [],
-      search: ''
+      search: '',
+      message: '',
+      errorMessage: ''  
     };
   },
   computed: {
@@ -142,15 +128,23 @@ export default {
       }
     },
     savePermissions() {
+      this.message = '';
+      this.errorMessage = '';
+
       api.post(`/roles/${this.roleData.id}/permissions`, {
         permission_ids: this.selectedPermissions
       })
-      .then(() => {
-        this.$emit('updated');
-        this.closeModal();
+      .then((response) => {
+        this.message = response.data.message || 'Permissions updated successfully.';
+        setTimeout(() => {
+            this.message = '';
+            this.$emit('updated');
+            this.closeModal();
+        }, 1500);
       })
       .catch(error => {
         console.error('Error saving permissions:', error);
+        this.errorMessage = error.response?.data?.message || 'Failed to save permissions.';
       });
     },
     closeModal() {
@@ -198,50 +192,80 @@ export default {
   align-items: center;
   justify-content: center;
   z-index: 1050;
+  overflow: auto;
 }
 
 .modal-dialog {
-  background: #fff;
-  border-radius: 8px;
   width: 600px;
+  max-width: 95%;
+  background: white;
+  border-radius: 8px;
   max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.modal-content {
   display: flex;
   flex-direction: column;
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
+.modal-content {
+   display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.modal-header,
+.modal-footer {
+  background-color: #fff;
   padding: 1rem;
+  z-index: 1;
+}
+
+.modal-header {
   border-bottom: 1px solid #ddd;
 }
 
+.modal-footer {
+  border-top: 1px solid #ddd;
+}
+
 .close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   font-size: 1.5rem;
   border: none;
   background: transparent;
+  color: #333;
   cursor: pointer;
 }
 
 .search-box {
-  padding: 0.75rem 1rem 0;
+  background: #fff;
+  padding: 0.5rem 1rem 0.5rem;
+  border-bottom: 1px solid #eee;
 }
 
-.modal-body {
+.scrollable-body {
+  overflow-y: auto;
+  flex: 1 1 auto;
   padding: 1rem;
 }
 
-.modal-footer {
-  padding: 1rem;
-  border-top: 1px solid #ddd;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+.alert {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
 }
 
 .permissions-group {
@@ -249,7 +273,7 @@ export default {
 }
 
 .permission-section {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .section-title {
@@ -258,6 +282,9 @@ export default {
   padding: 0.4rem 0.75rem;
   margin-bottom: 0.5rem;
   border-left: 4px solid #0d6efd;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: #333;
 }
 
 .permissions-list {
@@ -265,6 +292,14 @@ export default {
 }
 
 .form-check {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.4s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>
+

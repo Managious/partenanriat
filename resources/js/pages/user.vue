@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/axios';
 import $ from 'jquery';
 import 'datatables.net-bs5';
 import userModal from "../components/UserManagement/userModal.vue";
@@ -67,13 +67,22 @@ export default {
       $('#userTable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: { url: '/api/users', type: 'GET' },
+        ajax: {
+            url: 'api/users',
+            type: 'GET',
+            beforeSend: function (xhr) {
+                const token = localStorage.getItem('token');
+                if (token) {
+                  xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                }
+          }
+        },
         columns: [
           { data: 'id' },
           { data: 'name' },
           { data: 'username' },
           { data: 'email' },
-          { data: 'role_id' },
+          { data: 'role_name' },
           { 
             data: 'is_active', 
             render: data => data ? 'Yes' : 'No' 
@@ -113,7 +122,7 @@ export default {
     },
     async deleteUser() {
       try {
-        await axios.delete(`/api/users/${this.selectedUser.id}`);
+        await api.delete(`/users/${this.selectedUser.id}`);
         this.refreshData();
         this.isDeleteModalVisible = false;
       } catch (error) {
