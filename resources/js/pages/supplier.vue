@@ -80,7 +80,7 @@ export default {
                     }
                 },
                 columns: [
-                    { data: 'supplier_id' },
+                    { data: 'id' },
                     { data: 'supplier_name' },
                     { data: 'supplier_city' },
                     { data: 'supplier_zone' },
@@ -118,17 +118,16 @@ export default {
             this.isDeleteModalVisible = true;
         },
         async deleteSupplier() {
-        try {
-            await axios.delete(`/api/suppliers/${this.selectedSupplier.supplier_id}`);
-            this.refreshData(); // This should reload the DataTable
-            this.isDeleteModalVisible = false;
-            // Optional: Add success feedback
-            alert('Supplier deleted successfully!');
-        } catch (error) {
-            console.error("Error deleting supplier:", error);
-            alert("An error occurred while deleting the supplier.");
-        }
-    },
+            try {
+                await axios.delete(`/api/suppliers/${this.selectedSupplier.id}`); // Changed from supplier_id
+                this.refreshData();
+                this.isDeleteModalVisible = false;
+                alert('Supplier deleted successfully!');
+            } catch (error) {
+                console.error("Error deleting supplier:", error);
+                alert("An error occurred while deleting the supplier.");
+            }
+        },
     refreshData() {
         $('#supplierTable').DataTable().ajax.reload(null, false); // false keeps current pagination
     }

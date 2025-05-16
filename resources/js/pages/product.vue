@@ -81,7 +81,7 @@ export default {
                     }
                 },
                 columns: [
-                    { data: 'product_id' },
+                    { data: 'id' },
                     { data: 'product_name' },
                     { data: 'product_brand' },
                     { data: 'product_price' },
@@ -121,7 +121,7 @@ export default {
         },
         async deleteProduct() {
             try {
-                await axios.delete(`/api/products/${this.selectedProduct.product_id}`);
+                await axios.delete(`/api/products/${this.selectedProduct.id}`); // Changed from product_id to id
                 this.refreshData();
                 this.isDeleteModalVisible = false;
             } catch (error) {

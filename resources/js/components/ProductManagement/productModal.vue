@@ -45,12 +45,19 @@
 
             <div class="form-group">
               <label for="product_supplier">Supplier</label>
-              <select id="product_supplier" v-model="formData.product_supplier" class="form-control" required>
-                <option disabled value="">Please select</option>
-                <option v-for="supplier in suppliers" :key="supplier.supplier_id" :value="supplier.supplier_id">
-                  {{ supplier.supplier_name }}
-                </option>
-              </select>
+                  <select id="product_supplier" 
+                          v-model="formData.product_supplier" 
+                          class="form-control" 
+                          required>
+                      <option disabled value="">Please select</option>
+                      <option v-if="suppliersError" disabled value="">{{ suppliersError }}</option>
+                      <option v-else-if="suppliers.length === 0" disabled value="">Loading suppliers...</option>
+                      <option v-for="supplier in suppliers" 
+                              :key="supplier.id" 
+                              :value="supplier.id"> <!-- Make sure this is supplier.id -->
+                        {{ supplier.supplier_name }}
+                      </option>
+                  </select>
               <div v-if="errors.product_supplier" class="text-danger">
                 <small>{{ errors.product_supplier[0] }}</small>
               </div>
@@ -102,7 +109,6 @@ export default {
   data() {
     return {
       formData: {
-        product_id: '',
         product_name: '',
         product_brand: '',
         product_category: '',
@@ -114,6 +120,7 @@ export default {
       },
       errors: {},
       suppliers: [], // local suppliers list
+      suppliersError: null,
     };
   },
   watch: {
@@ -132,25 +139,46 @@ export default {
   methods: {
     async fetchSuppliers() {
       try {
-        const response = await axios.get('/api/suppliers/all');
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/api/suppliers/all', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         this.suppliers = response.data;
+        this.suppliersError = null;
       } catch (error) {
         console.error("Failed to load suppliers:", error);
+        this.suppliersError = "Failed to load suppliers. Please try again later.";
+        this.suppliers = []; // Clear existing suppliers
+        
+        if (error.response?.data?.message) {
+          this.suppliersError = error.response.data.message;
+        }
       }
     },
     async submitForm() {
-      const url = this.isEditMode
-        ? `/api/products/${this.formData.product_id}`
-        : '/api/products';
-      const method = this.isEditMode ? 'put' : 'post';
+      console.log('Form data before submit:', this.formData);
       try {
-        await axios[method](url, this.formData);
+        const formData = { 
+          ...this.formData,
+          product_supplier: this.formData.product_supplier || null // Ensure proper null handling
+        };
+        
+        const url = this.isEditMode
+          ? `/api/products/${this.formData.id}`
+          : '/api/products';
+          
+        const method = this.isEditMode ? 'put' : 'post';
+        
+        await axios[method](url, formData); // Use the prepared formData
         this.$emit('refresh');
         this.closeModal();
       } catch (error) {
         if (error.response?.status === 422) {
           this.errors = error.response.data.errors;
         } else {
+          console.error("Error saving product:", error);
           alert('Error saving product.');
         }
       }

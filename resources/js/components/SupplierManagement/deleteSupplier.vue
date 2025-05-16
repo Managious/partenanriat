@@ -39,25 +39,26 @@ export default {
     },
     methods: {
         async deleteSupplier() {
-    try {
-        await axios.delete(`/api/suppliers/${this.supplierData.supplier_id}`);
-        this.$emit('refresh'); // This tells the parent component to refresh
-        this.$emit('close');   // Close the modal
-        // Optional: Add a success notification
-        this.$notify({
-            title: 'Success',
-            message: 'Supplier deleted successfully',
-            type: 'success'
-        });
-    } catch (error) {
-        console.error('Delete error:', error);
-        this.$notify({
-            title: 'Error',
-            message: 'Failed to delete supplier',
-            type: 'error'
-        });
-    }
-},
+            try {
+                // Changed from supplier_id to id
+                await axios.delete(`/api/suppliers/${this.supplierData.id}`);
+                this.$emit('refresh');
+                this.$emit('close');
+                // Optional: Add a success notification
+                this.$notify({
+                    title: 'Success',
+                    message: 'Supplier deleted successfully',
+                    type: 'success'
+                });
+            } catch (error) {
+                console.error('Delete error:', error);
+                this.$notify({
+                    title: 'Error',
+                    message: 'Failed to delete supplier',
+                    type: 'error'
+                });
+            }
+        },
         closeModal() {
             this.$emit('close');
         },
@@ -71,6 +72,7 @@ export default {
 </script>
 
 <style scoped>
+/* Your existing styles remain the same */
 .modal-overlay {
     position: fixed;
     top: 0;

@@ -3,7 +3,7 @@
     <div class="modal-dialog" @click.stop>
       <form class="modal-content" >
         <div class="modal-header">
-          <h5 class="modal-title">{{ isEditing ? 'Edit Client' : 'Create Client' }}</h5>
+          <h5 class="modal-title">{{ isEditMode ? 'Edit Client' : 'Create Client' }}</h5>
           <button type="button" class="close" @click="close">
             <span>&times;</span>
           </button>
@@ -86,10 +86,18 @@ export default {
         isEditMode: Boolean,
         clientData: Object,
     },
+
     data() {
         return {
             formData: {
                 name: '',
+                city: '',
+                zone: '',
+                type: '',
+                address: '',
+                email: '',
+                phone: '',
+                discount: 0
             },
             errors: {},
             isSubmitting: false,
@@ -106,25 +114,64 @@ export default {
         },
     },
     methods: {
-        async submitForm() {
-            this.isSubmitting = true;
-            this.errors = {};
-
-            const url = this.isEditMode ? `/clients/${this.clientData.id}` : '/clients';
-            const method = this.isEditMode ? 'put' : 'post';
-            try {
-                await api[method](url, this.formData);
-                this.$emit('refresh');
-                this.closeModal();
-            } catch (error) {
-                if (error.response && error.response.status === 422) {
-                    this.errors = error.response.data.errors;
-                } else {
-                    alert('Error saving permission:', error);
-                }
-            }finally {
-                this.isSubmitting = false;
+        validateForm() {
+          let isValid = true;
+          this.errors = {};
+          
+          // Required fields check
+          const requiredFields = ['name', 'city', 'zone', 'type', 'address', 'email', 'phone'];
+          requiredFields.forEach(field => {
+            if (!this.formData[field]?.trim()) {
+              this.errors[field] = ['This field is required'];
+              isValid = false;
             }
+          });
+
+          // Email format validation
+          if (this.formData.email && !/^\S+@\S+\.\S+$/.test(this.formData.email)) {
+            this.errors.email = ['Please enter a valid email address'];
+            isValid = false;
+          }
+
+          return isValid;
+        },
+        async submitForm() {
+          if (!this.validateForm()) return;
+
+          this.isSubmitting = true;
+          this.errors = {};
+
+          try {
+            // Correct endpoint - only one /api prefix
+            const endpoint = this.isEditMode 
+              ? `/clients/${this.clientData.id}`
+              : '/clients';
+
+            const method = this.isEditMode ? 'put' : 'post';
+            
+            const response = await api({
+              method,
+              url: endpoint,
+              data: this.formData,
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+              }
+            });
+            
+            this.$emit('refresh');
+            this.closeModal();
+          } catch (error) {
+            if (error.response?.status === 422) {
+              this.errors = error.response.data.errors || {};
+            } else {
+              console.error('API error:', error);
+              alert(error.response?.data?.message || 'An error occurred');
+            }
+          } finally {
+            this.isSubmitting = false;
+          }
         },
         closeModal() {
             this.$emit('close');
