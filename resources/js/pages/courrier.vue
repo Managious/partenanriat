@@ -72,12 +72,9 @@ export default {
         ajax: {
             url: '/api/courriers',
             type: 'GET',
-            beforeSend: function (xhr) {
-                        const token = localStorage.getItem('token');
-                        if (token) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                        }
-                    }
+            xhrFields: {
+                withCredentials: true
+            }
         },
         columns: [
             { data: 'id' },

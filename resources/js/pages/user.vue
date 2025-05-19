@@ -68,14 +68,11 @@ export default {
         processing: true,
         serverSide: true,
         ajax: {
-            url: 'api/users',
+            url: '/api/users',
             type: 'GET',
-            beforeSend: function (xhr) {
-                const token = localStorage.getItem('token');
-                if (token) {
-                  xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                }
-          }
+            xhrFields: {
+              withCredentials: true
+            }
         },
         columns: [
           { data: 'id' },

@@ -17,7 +17,8 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: login
+        component: login,
+        meta: { guest: true }
     },
     {
         path: '/',
@@ -87,20 +88,18 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to, from, next) => {
-    const authStore = useAuthStore();
-  
-    authStore.checkAuthentication();
-  
-    const isAuthenticated = !!authStore.token;
-  
-    if (to.meta.requiresAuth && !isAuthenticated) {
-      next('/login');
-    } else if (to.path === '/login' && isAuthenticated) {
-      next('/');
-    } else {
-      next();
+router.beforeEach(async (to) => {
+  const auth = useAuthStore();
+  if (to.meta.requiresAuth) {
+    if (auth.user === null) {
+      await auth.fetchUser()
     }
-});  
+    if (!auth.isAuthenticated) {
+      return {
+        name: 'Login'
+      }
+    }
+  }
+});
 
 export default router;

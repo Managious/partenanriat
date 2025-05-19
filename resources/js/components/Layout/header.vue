@@ -21,21 +21,26 @@
     </div>
   </header>
 </template>
-<script setup>
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore';
 
-const router = useRouter();
-const authStore = useAuthStore();
+<script setup>
+import { ref }           from 'vue'
+import { useRouter }     from 'vue-router'
+import { useAuthStore }  from '@/stores/authStore'
+
+const router       = useRouter()
+const authStore    = useAuthStore()
+const isLoggingOut = ref(false)
 
 const handleLogout = async () => {
-  await authStore.logout();
-  router.push('/login');
-};
+  isLoggingOut.value = true
+  await authStore.logout()
+  isLoggingOut.value = false
+  router.push({ name: 'Login' })
+}
 
 const goToProfile = () => {
-  router.push('/profile');
-};
+  router.push({ name: 'Profile' })
+}
 </script>
   
 <style scoped>

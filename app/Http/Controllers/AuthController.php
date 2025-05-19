@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -30,19 +31,10 @@ class AuthController extends Controller
             return response()->json(['message' => 'Account is disabled.'], 403);
         }
 
-        $user->tokens()->delete();
-
-        $tokenName = $request->header('User-Agent') ?? 'unknown-device';
-
-        $tokenInstance = $user->createToken($tokenName);
-
-        $tokenInstance->accessToken->expires_at = now()->addHours(8);
-        $tokenInstance->accessToken->save();
-
-        $token = $tokenInstance->plainTextToken;
+        Auth::login($user);
+        $request->session()->regenerate();
 
         return response()->json([
-            'token' => $token,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -54,9 +46,26 @@ class AuthController extends Controller
         ]);
     }
 
+    public function user(Request $request)
+    {
+        $user = $request->user()->load('role');
+        return response()->json([
+            'user' => [
+                'id'          => $user->id,
+                'name'        => $user->name,
+                'username'    => $user->username,
+                'email'       => $user->email,
+                'role'        => $user->role->name,
+                'permissions' => $user->getAllPermissions()->pluck('name'),
+            ],
+        ]);
+    }
+
     public function logout(Request $request) 
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json(['message' => 'Successfully logged out']);
     }

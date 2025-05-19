@@ -5,11 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-
-    protected $primaryKey = 'client_id';   
-    public $incrementing = false;  
-    protected $keyType = 'string';   
-
     protected $fillable = [
         'client_name',
         'client_city',

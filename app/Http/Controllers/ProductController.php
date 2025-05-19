@@ -37,13 +37,13 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::findOrFail($id); // Changed from where('product_id', $id)
+        $product = Product::findOrFail($id); 
         return response()->json($product);
     }
 
     public function update(ProductRequest $request, $id)
     {
-        $product = Product::findOrFail($id); // Changed from where('product_id', $id)
+        $product = Product::findOrFail($id); 
         $product->update($request->validated());
 
         return response()->json(['message' => 'Produit mis à jour avec succès']);
@@ -51,7 +51,7 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        $product = Product::findOrFail($id); // Changed from where('product_id', $id)
+        $product = Product::findOrFail($id); 
         $product->delete();
 
         return response()->json(['message' => 'Produit supprimé avec succès']);

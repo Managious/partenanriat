@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
@@ -26,13 +25,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('auth')->group(function() {
-    Route::post('/login', [AuthController::class, 'login']);
-
-    Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function() {
-        Route::post('/logout', [AuthController::class, 'logout']);
-    });
-});
 Route::prefix('orders')->group(function () {
     Route::get('/', [OrdersController::class, 'index']);
     Route::post('/', [OrdersController::class, 'store']);
@@ -40,7 +32,7 @@ Route::prefix('orders')->group(function () {
     Route::delete('/{order}', [OrdersController::class, 'destroy']);
     Route::post('/store-cart', [OrdersController::class, 'storeCart']);
 });
-Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index']);
@@ -87,7 +79,7 @@ Route::middleware(['auth:sanctum', 'check.token.expiry'])->group(function () {
         Route::get('/{supplier}', [SupplierController::class, 'show']);
         Route::post('/', [SupplierController::class, 'store']);
         Route::put('/{supplier}', [SupplierController::class, 'update']);
-        Route::delete('/{supplier_id}', [SupplierController::class, 'destroy']); // Fixed this line
+        Route::delete('/{supplier}', [SupplierController::class, 'destroy']); // Fixed this line
     });
     
     Route::prefix('courriers')->group(function () {

@@ -37,31 +37,43 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useAuthStore } from '../stores/authStore';
-import { useRouter } from 'vue-router'; 
+import { ref }            from 'vue'
+import { useRouter }      from 'vue-router'
+import { useAuthStore }   from '../stores/authStore'
 
-const login = ref('');
-const password = ref('');
-const isLoading = ref(false);
-const error = ref('');
+const login     = ref('')
+const password  = ref('')
+const isLoading = ref(false)
+const error     = ref('')
 
-const authStore = useAuthStore();
-const router = useRouter();
+const authStore = useAuthStore()
+const router    = useRouter()
 
 const handleLogin = async () => {
-    error.value = '';
-    isLoading.value = true;
-    try {
-        await authStore.login({ login: login.value, password: password.value });
-        router.push('/');
-    } catch (err) {
-        alert(err);
-        error.value = err.response?.data?.message || 'Login failed';
-    } finally {
-        isLoading.value = false;
+  error.value     = ''
+  isLoading.value = true
+
+  const success = await authStore.login({
+    login:    login.value,
+    password: password.value
+  })
+
+  isLoading.value = false
+
+  if (success) {
+    router.push({ name: 'Home' })
+  } else {
+    if (authStore.errors.login) {
+      error.value = authStore.errors.login[0]
     }
-};
+    else if (authStore.errors.password) {
+      error.value = authStore.errors.password[0]
+    }
+    else {
+      error.value = 'Login failed. Please check your credentials.'
+    }
+  }
+}
 </script>
 
 <style scoped>

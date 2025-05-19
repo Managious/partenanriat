@@ -2,8 +2,8 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
+import api from '@/axios';
 import { useAuthStore } from '@/stores/authStore'; 
-import { forceLogout } from '@/composables/auth';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
@@ -15,7 +15,18 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 
-const authStore = useAuthStore();
-authStore.checkAuthentication();
+const auth = useAuthStore()
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 401) {
+      auth.user = null
+    }
+    return Promise.reject(err)
+  }
+)
 
-app.mount('#app');
+router.isReady().then(async () => {
+  await auth.fetchUser()
+  app.mount('#app')
+})

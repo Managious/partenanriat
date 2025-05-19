@@ -1,30 +1,40 @@
 <template>
-    <div class="modal-overlay" @click="handleOutsideClick">
-        <div class="modal-dialog" @click.stop>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ isEditMode ? 'Edit Role' : 'Create Role' }}</h5>
-                    <button type="button" class="close" @click="closeModal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <form @submit.prevent="submitForm">
+    <div class="custom-modal">
+        <div class="modal-overlay" @click="handleOutsideClick">
+            <div class="modal-dialog" @click.stop>
+                <form @submit.prevent="submitForm" class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ isEditMode ? 'Edit Role' : 'Create Role' }}</h5>
+                        <button type="button" class="close" @click="closeModal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" id="name" v-model="formData.name" class="form-control" required />
+                            <input type="text" id="name" v-model="formData.name" class="form-control" required autofocus/>
                             <div v-if="errors.name" class="text-danger">
                                 <small>{{ errors.name[0] }}</small>
                             </div>
-                        </div>
-
-                        <div class="modal-footer">
+                        </div>                          
+                    </div>
+                    <div class="modal-footer justify-content-between align-items-center flex-wrap gap-2">
+                        <transition name="fade">
+                            <div v-if="message" class="alert alert-success mb-0 p-2" style="font-size: 0.85rem;">
+                            {{ message }}
+                            </div>
+                        </transition>
+                        <transition name="fade">
+                            <div v-if="errorMessage" class="alert alert-danger mb-0 p-2" style="font-size: 0.85rem;">
+                            {{ errorMessage }}
+                            </div>
+                        </transition>
+                        <div class="ms-auto d-flex gap-2">
                             <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
                             <button type="button" class="btn btn-secondary" @click="closeModal">Cancel</button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -43,6 +53,8 @@ export default {
                 name: '',
             },
             errors: {},
+            message: '',      
+            errorMessage: '',
         };
     },
     watch: {
@@ -59,16 +71,24 @@ export default {
         async submitForm() {
             const url = this.isEditMode ? `/roles/${this.roleData.id}` : '/roles';
             const method = this.isEditMode ? 'put' : 'post';
+            this.message = '';
+            this.errorMessage = '';
+            this.errors = {};
+
             try {
-                await api[method](url, this.formData);
-                this.$emit('refresh');
-                this.closeModal();
+                const response = await api[method](url, this.formData);
+                this.message = response.data.message || 'Success';
+                setTimeout(() => {
+                    this.message = '';
+                    this.$emit('refresh');
+                    this.closeModal();
+                }, 1500);
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     this.errors = error.response.data.errors;
                 } else {
-                    alert('Error saving role:\n' + (error.response?.data?.error || error.message || 'Unknown error'));
-                    console.error('Full error:', error);
+                    this.errorMessage = error.response?.data?.message || 'Failed to save role.';
+                    console.error('Error saving role:', error);
                 }
             }
         },
@@ -195,4 +215,10 @@ export default {
     background-color: #4b5563;
 }
 
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.4s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>
