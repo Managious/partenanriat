@@ -40,6 +40,7 @@ const links = [
   { title: 'Courriers', path: '/courriers', icon: 'fas fa-motorcycle', permission: null },
   { title: 'Clients', path: '/clients', icon: 'fas fa-users', permission: null },
   { title: 'Orders', path: '/orders', icon: 'fas fa-shopping-cart', permission: null },
+  { title: 'Fees', path: '/fees', icon: 'fas fa-money-bill-wave', permission: null },
 ];
 
 const filteredLinks = computed(() =>

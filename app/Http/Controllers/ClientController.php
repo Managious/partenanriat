@@ -1,52 +1,50 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use App\Http\Requests\ClientRequest;
 use Yajra\DataTables\Facades\DataTables;
 
 class ClientController extends Controller
 {
     public function index(Request $request)
-    {   
-        if($request->ajax())
-        {
-            $clients = Client::query();
-            return DataTables::of($clients)
+    {
+        if ($request->ajax()) {
+            return DataTables::of(Client::query())
                 ->addColumn('action', function ($client) {
                     return '
-                        <button class="btn btn-sm btn-warning edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger delete-btn" title="Delete"> <i class="fas fa-trash"></i></span></button>
+                        <button class="btn btn-warning btn-sm edit-btn">Edit</button>
+                        <button class="btn btn-danger btn-sm delete-btn">Delete</button>
                     ';
                 })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return response()->json([]);
+        return response()->json(['message' => 'Invalid request'], 400);
     }
 
     public function store(ClientRequest $request)
     {
-        $validated = $request->validated(); 
-        Client::create($validated);
-
-        return response()->json(['message' => 'Client created successfully!']);
+        Client::create($request->validated());
+        return response()->json(['message' => 'Client created successfully']);
     }
 
-    public function update(ClientRequest $request, $id)
+    public function update(ClientRequest $request, Client $client)
     {
-        $client = Client::findOrFail($id);
         $client->update($request->validated());
-
-        return response()->json(['message' => 'Client updated successfully!']);
+        return response()->json(['message' => 'Client updated successfully']);
     }
 
-    public function destroy($id)
+    public function destroy(Client $client)
     {
-       $client = Client::findOrFail($id);
-       $client->delete();
+        $client->delete();
+        return response()->json(['message' => 'Client deleted successfully']);
+    }
 
-       return response()->json(['message' => 'Client deleted successfully.']);
+    public function list()
+    {
+        return Client::select('id', 'client_name')->get();
     }
 }

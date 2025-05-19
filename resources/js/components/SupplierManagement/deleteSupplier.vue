@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-danger" @click="deleteSupplier">Delete</button>
+                    <button class="btn btn-danger" @click="$emit('confirm')">Delete</button>
                     <button class="btn btn-secondary" @click="closeModal">Cancel</button>
                 </div>
 
@@ -26,6 +26,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
 import axios from 'axios';
