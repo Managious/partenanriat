@@ -56,5 +56,10 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Produit supprimé avec succès']);
     }
+    //for orders
+    public function list()
+    {
+    return Product::all(); 
+    }
 }
 

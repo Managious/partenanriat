@@ -49,7 +49,7 @@
     <div
       class="col-md-6 mb-4"
       v-for="product in filteredProducts"
-      :key="product.product_id"
+      :key="product.id"
     >
       <div class="card h-100 shadow-sm border-0">
         <div class="card-body d-flex flex-column">
@@ -85,7 +85,7 @@
           <!-- Quantity Input -->
           <input
             type="number"
-            v-model.number="quantities[product.product_id]"
+            v-model.number="quantities[product.id]"
             :max="product.product_stock_1"
             class="form-control mb-2"
             min="1"
@@ -109,9 +109,21 @@
         </div>
       </div>
     </div>
+              <!-- order confirmation (new) -->
+  <div v-if="showConfirmation" class="alert alert-success d-flex align-items-center mt-3">
+    <i class="fas fa-check-circle me-2"></i>
+    <div>Order confirmed successfully!</div>
+  </div>
+
+
+
+
+
   </template>
   <template v-else>
     <ProductTemplateCard />
+    
+
   </template>
 
   
@@ -131,7 +143,7 @@ export default {
   data() {
     return {
       cartOpen: false,
-
+      showConfirmation: false,//pour order confirm
       products: [],
       quantities: {},
       cart: [],
@@ -157,22 +169,24 @@ export default {
     async fetchProducts() {
       try {
         const res = await axios.get("/api/products/all");
+            console.log("API Response:", res.data); 
+
         this.products = res.data;
       } catch (err) {
         console.error("Failed to fetch products:", err);
       }
     },
     getTotal(product) {
-      const qty = this.quantities[product.product_id] || 0;
+      const qty = this.quantities[product.id] || 0;
       const price = parseFloat(product.product_price) || 0;
       return qty * price;
     },
     canAdd(product) {
-      const qty = this.quantities[product.product_id];
+      const qty = this.quantities[product.id];
       return qty > 0 && qty <= product.product_stock_1;
     },
     addToCart(product) {
-    const quantity = this.quantities[product.product_id];
+    const quantity = this.quantities[product.id];
 
    if (!quantity || quantity <= 0 || quantity > product.product_stock_1) {
     alert(" Invalid quantity for " + product.product_name);
@@ -180,7 +194,7 @@ export default {
   }
 
   const item = {
-    product_id: product.product_id,
+    id: product.id,
     product_name: product.product_name,
     product_sale_price: product.product_price,
     product_discount_1: 0,
@@ -188,7 +202,7 @@ export default {
   };
 
   this.cart.push(item);
-  this.quantities[product.product_id] = 0;
+  this.quantities[product.id] = 0;
     },
     removeFromCart(index) {
       this.cart.splice(index, 1);
@@ -205,7 +219,8 @@ export default {
 
       try {
         await axios.post("/api/orders/store-cart", payload);
-        alert(" Order confirmed!");
+        //alert(" Order confirmed!");
+        this.showConfirmation = true;
         this.cart = [];
       } catch (err) {
         alert(" Failed to confirm order");
@@ -219,3 +234,115 @@ export default {
 };
 </script>
 
+<style  >
+/* animation for fade */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* dropdown panel */
+.cart-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background-color: #f8f9fa; /* Bootstrap light */
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  width: 360px;
+  z-index: 999;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* cards */
+.card {
+  background-color: rgba(250, 248, 249, 0.6); /* similar to #faf8f998 */
+  color: #111827;
+  border-radius: 0.75rem;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.card input {
+  background-color: white;
+  border: 1px solid #ced4da;
+  color: #111827;
+}
+
+/* emerald-styled button */
+.card .btn {
+  background-color: #097d56;
+  border: none;
+  color: white;
+  font-weight: 500;
+  border-radius: 0.5rem;
+}
+
+.card .btn:hover {
+  background-color: #086b49;
+}
+
+.card strong {
+  color: #097d56;
+}
+
+.card p {
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.card small {
+  color: #6b7280;
+}
+
+/* Cart Summary Panel (already handled via Bootstrap, minimal needed) */
+.cart-summary {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Transition for Vue */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.fade-slide-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+</style>

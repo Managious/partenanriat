@@ -32,7 +32,7 @@ Route::prefix('orders')->group(function () {
     Route::delete('/{order}', [OrdersController::class, 'destroy']);
     Route::post('/store-cart', [OrdersController::class, 'storeCart']);
 });
-Route::middleware(['auth:sanctum'])->group(function () {
+//Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index']);
@@ -98,6 +98,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/{client}', [ClientController::class, 'delete']);
     });
 
-});
+//});
 
 

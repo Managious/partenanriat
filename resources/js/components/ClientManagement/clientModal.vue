@@ -1,7 +1,7 @@
 <template>
   <div class="modal-overlay" @click="handleOutsideClick">
     <div class="modal-dialog" @click.stop>
-      <form class="modal-content" >
+      <form class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">{{ isEditMode ? 'Edit Client' : 'Create Client' }}</h5>
           <button type="button" class="close" @click="close">
@@ -11,65 +11,65 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" id="name" v-model="formData.name" class="form-control" required />
-            <div v-if="errors.name" class="text-danger">
-              <small>{{ errors.name[0] }}</small>
+            <input type="text" id="name" v-model="formData.client_name" class="form-control" required />
+            <div v-if="errors.client_name" class="text-danger">
+              <small>{{ errors.client_name[0] }}</small>
             </div>
           </div>
           <div class="form-group">
             <label for="city">City</label>
-            <input type="text" id="city" v-model="formData.city" class="form-control" required />
-            <div v-if="errors.city" class="text-danger">
-              <small>{{ errors.city[0] }}</small>
+            <input type="text" id="city" v-model="formData.client_city" class="form-control" required />
+            <div v-if="errors.client_city" class="text-danger">
+              <small>{{ errors.client_city[0] }}</small>
             </div>
           </div>
           <div class="form-group">
             <label for="zone">Zone</label>
-            <input type="text" id="zone" v-model="formData.zone" class="form-control" required />
-            <div v-if="errors.zone" class="text-danger">
-              <small>{{ errors.zone[0] }}</small>
+            <input type="text" id="zone" v-model="formData.client_zone" class="form-control" required />
+            <div v-if="errors.client_zone" class="text-danger">
+              <small>{{ errors.client_zone[0] }}</small>
             </div>
           </div>
           <div class="form-group">
             <label for="type">Type</label>
-            <input type="text" id="type" v-model="formData.type" class="form-control" required />
-            <div v-if="errors.type" class="text-danger">
-              <small>{{ errors.type[0] }}</small>
+            <input type="text" id="type" v-model="formData.client_type" class="form-control" required />
+            <div v-if="errors.client_type" class="text-danger">
+              <small>{{ errors.client_type[0] }}</small>
             </div>
           </div>
           <div class="form-group">
             <label for="address">Address</label>
-            <input type="text" id="address" v-model="formData.address" class="form-control" required />
-            <div v-if="errors.address" class="text-danger">
-              <small>{{ errors.address[0] }}</small>
+            <input type="text" id="address" v-model="formData.client_address" class="form-control" required />
+            <div v-if="errors.client_address" class="text-danger">
+              <small>{{ errors.client_address[0] }}</small>
             </div>
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" v-model="formData.email" class="form-control" required />
-            <div v-if="errors.email" class="text-danger">
-              <small>{{ errors.email[0] }}</small>
+            <input type="email" id="email" v-model="formData.client_email" class="form-control" required />
+            <div v-if="errors.client_email" class="text-danger">
+              <small>{{ errors.client_email[0] }}</small>
             </div>
           </div>
           <div class="form-group">
             <label for="phone">Phone</label>
-            <input type="text" id="phone" v-model="formData.phone" class="form-control" required />
-            <div v-if="errors.phone" class="text-danger">
-              <small>{{ errors.phone[0] }}</small>
+            <input type="text" id="phone" v-model="formData.client_phone" class="form-control" required />
+            <div v-if="errors.client_phone" class="text-danger">
+              <small>{{ errors.client_phone[0] }}</small>
             </div>
           </div>
           <div class="form-group">
             <label for="discount">Discount</label>
-            <input type="number" id="discount" v-model="formData.discount" class="form-control" required />
-            <div v-if="errors.discount" class="text-danger">
-              <small>{{ errors.discount[0] }}</small>
+            <input type="number" id="discount" v-model="formData.client_discount" class="form-control" required />
+            <div v-if="errors.client_discount" class="text-danger">
+              <small>{{ errors.client_discount[0] }}</small>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" :disabled="isSubmitting" @click="submitForm" >
+          <button type="button" class="btn btn-primary" :disabled="isSubmitting" @click="submitForm">
             <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              {{ isEditMode ? 'Update' : 'Create' }}
+            {{ isEditMode ? 'Update' : 'Create' }}
           </button>
           <button type="button" class="btn btn-secondary" @click="closeModal" :disabled="isSubmitting">
             Cancel
@@ -79,111 +79,127 @@
     </div>
   </div>
 </template>
+
 <script>
 import api from '@/axios';
+
 export default {
-    props: {
-        isEditMode: Boolean,
-        clientData: Object,
+  props: {
+    isEditMode: Boolean,
+    clientData: Object,
+  },
+
+  data() {
+    return {
+      formData: {
+        client_name: '',
+        client_city: '',
+        client_zone: '',
+        client_type: '',
+        client_address: '',
+        client_email: '',
+        client_phone: '',
+        client_discount: 0,
+      },
+      errors: {},
+      isSubmitting: false,
+    };
+  },
+
+  watch: {
+    clientData: {
+      immediate: true,
+      handler(newValue) {
+        if (this.isEditMode && newValue) {
+          this.formData = { ...newValue };
+        }
+      },
+    },
+  },
+
+  methods: {
+    validateForm() {
+      let isValid = true;
+      this.errors = {};
+
+      const requiredFields = [
+        'client_name',
+        'client_city',
+        'client_zone',
+        'client_type',
+        'client_address',
+        'client_email',
+        'client_phone',
+      ];
+
+      requiredFields.forEach((field) => {
+        if (!this.formData[field]?.toString().trim()) {
+          this.errors[field] = ['This field is required'];
+          isValid = false;
+        }
+      });
+
+      if (
+        this.formData.client_email &&
+        !/^\S+@\S+\.\S+$/.test(this.formData.client_email)
+      ) {
+        this.errors.client_email = ['Please enter a valid email address'];
+        isValid = false;
+      }
+
+      return isValid;
     },
 
-    data() {
-        return {
-            formData: {
-                name: '',
-                city: '',
-                zone: '',
-                type: '',
-                address: '',
-                email: '',
-                phone: '',
-                discount: 0
-            },
-            errors: {},
-            isSubmitting: false,
-        };
+    async submitForm() {
+      if (!this.validateForm()) return;
+
+      this.isSubmitting = true;
+      this.errors = {};
+
+      try {
+        const endpoint = this.isEditMode
+          ? `/clients/${this.clientData.id}`
+          : '/clients';
+        const method = this.isEditMode ? 'put' : 'post';
+
+        const response = await api({
+          method,
+          url: endpoint,
+          data: this.formData,
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        this.$emit('refresh');
+        this.closeModal();
+      } catch (error) {
+        if (error.response?.status === 422) {
+          this.errors = error.response.data.errors || {};
+        } else {
+          console.error('API error:', error);
+          alert(error.response?.data?.message || 'An error occurred');
+        }
+      } finally {
+        this.isSubmitting = false;
+      }
     },
-    watch: {
-        clientData: {
-            immediate: true,
-            handler(newValue) {
-                if (this.isEditMode && newValue) {
-                    this.formData = { ...newValue };
-                }
-            },
-        },
+
+    closeModal() {
+      this.$emit('close');
     },
-    methods: {
-        validateForm() {
-          let isValid = true;
-          this.errors = {};
-          
-          // Required fields check
-          const requiredFields = ['name', 'city', 'zone', 'type', 'address', 'email', 'phone'];
-          requiredFields.forEach(field => {
-            if (!this.formData[field]?.trim()) {
-              this.errors[field] = ['This field is required'];
-              isValid = false;
-            }
-          });
 
-          // Email format validation
-          if (this.formData.email && !/^\S+@\S+\.\S+$/.test(this.formData.email)) {
-            this.errors.email = ['Please enter a valid email address'];
-            isValid = false;
-          }
-
-          return isValid;
-        },
-        async submitForm() {
-          if (!this.validateForm()) return;
-
-          this.isSubmitting = true;
-          this.errors = {};
-
-          try {
-            // Correct endpoint - only one /api prefix
-            const endpoint = this.isEditMode 
-              ? `/clients/${this.clientData.id}`
-              : '/clients';
-
-            const method = this.isEditMode ? 'put' : 'post';
-            
-            const response = await api({
-              method,
-              url: endpoint,
-              data: this.formData,
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-              }
-            });
-            
-            this.$emit('refresh');
-            this.closeModal();
-          } catch (error) {
-            if (error.response?.status === 422) {
-              this.errors = error.response.data.errors || {};
-            } else {
-              console.error('API error:', error);
-              alert(error.response?.data?.message || 'An error occurred');
-            }
-          } finally {
-            this.isSubmitting = false;
-          }
-        },
-        closeModal() {
-            this.$emit('close');
-        },
-        handleOutsideClick(event) {
-            if (event.target === this.$el) {
-                this.closeModal();
-            }
-        },
+    handleOutsideClick(event) {
+      if (event.target === this.$el) {
+        this.closeModal();
+      }
     },
-}
+  },
+};
 </script>
+
 <style scoped>
 .modal-overlay {
     position: fixed;
