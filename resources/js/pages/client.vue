@@ -1,68 +1,61 @@
 <template>
-    <div class="container-fluid px-4">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Clients List</h5>
-          <button class="btn btn-primary" @click="showCreateModal">Add Client</button>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table id="clientTable" class="table table-striped table-bordered">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>City</th>
-                  <th>Zone</th>
-                  <th>Type</th>
-                  <th>Address</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Discount</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
+  <div class="container">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Clients List</h5>
+        <button class="btn btn-primary" @click="showCreateModal">Add Client</button>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table id="clientTable" class="table table-bordered" style="width: 100%">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>City</th>
+                <th>Zone</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </div>
-  
-    <client-modal 
-        v-if="isClientModalVisible"
-        :is-edit-mode="isEditMode"
-        :client-data="selectedClient"
-        @close="isClientModalVisible = false"
-        @refresh="refreshData"
+
+    <client-modal
+      v-if="showModal"
+      :is-edit-mode="isEditMode"
+      :client-data="selectedClient"
+      @close="closeModal"
+      @refresh="reloadTable"
     />
-    
-    <delete-client 
-        v-if="isDeleteModalVisible"
-        :client-data="selectedClient"
-        @close="isDeleteModalVisible = false"
-        @confirm="deleteClient"  
+
+    <delete-client
+      v-if="showDeleteModal"
+      :client-data="selectedClient"
+      @close="closeDeleteModal"
+      @confirm="deleteClient"
     />
+  </div>
 </template>
-  
+
 <script>
-import api from '@/axios';
 import $ from 'jquery';
 import 'datatables.net-bs5';
-import clientModal from '../components/ClientManagement/clientModal.vue';
-import deleteClient from '../components/ClientManagement/deleteClient.vue';
+import axios from 'axios';
+import ClientModal from '../components/ClientManagement/clientModal.vue';
+import DeleteClient from '../components/ClientManagement/deleteClient.vue';
 
 export default {
-  components: {
-    clientModal,
-    deleteClient
-  },
+  components: { ClientModal, DeleteClient },
   data() {
     return {
-      isClientModalVisible: false,
-      isDeleteModalVisible: false,
+      showModal: false,
+      showDeleteModal: false,
       isEditMode: false,
       selectedClient: null,
+      table: null,
     };
   },
   mounted() {
@@ -84,14 +77,14 @@ export default {
           },
           columns: [
             { data: 'id'},
-            { data: 'client_name' },
-            { data: 'client_city' },
-            { data: 'client_zone' },
-            { data: 'client_type' },
-            { data: 'client_address' },
-            { data: 'client_email' },
-            { data: 'client_phone' },
-            { data: 'client_discount' },
+            { data: 'name' },
+            { data: 'city' },
+            { data: 'zone' },
+            { data: 'type' },
+            { data: 'address' },
+            { data: 'email' },
+            { data: 'phone' },
+            { data: 'discount' },
             {
               data: 'action',
               orderable: false,
@@ -108,35 +101,34 @@ export default {
           },
       });
     },
-    refreshData() {
-      $('#clientTable').DataTable().ajax.reload();
+    reloadTable() {
+      this.table.ajax.reload();
     },
     showCreateModal() {
-      this.isEditMode = false;
       this.selectedClient = null;
-      this.isClientModalVisible = true;
+      this.isEditMode = false;
+      this.showModal = true;
     },
-    showEditModal(client) {
+    editClient(client) {
+      this.selectedClient = client;
       this.isEditMode = true;
-      this.selectedClient = client;
-      this.isClientModalVisible = true;
+      this.showModal = true;
     },
-    showDeleteModal(client) {
+    closeModal() {
+      this.showModal = false;
+    },
+    confirmDelete(client) {
       this.selectedClient = client;
-      this.isDeleteModalVisible = true;
+      this.showDeleteModal = true;
+    },
+    closeDeleteModal() {
+      this.showDeleteModal = false;
     },
     async deleteClient() {
-      try {
-            await api.delete(`/clients/${this.selectedClient.id}`);
-            this.refreshData();
-            this.isDeleteModalVisible = false;
-      } catch (error) {
-        console.error("Error deleting client:", error);
-      }
+      await axios.delete(`/api/clients/${this.selectedClient.client_id}`);
+      this.reloadTable();
+      this.closeDeleteModal();
     }
   }
-
-}
+};
 </script>
-  
-  

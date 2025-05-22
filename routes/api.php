@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\FeeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CourrierController;
@@ -64,6 +65,13 @@ Route::prefix('orders')->group(function () {
         Route::get('/list', [PermissionController::class, 'list']);
     });
 
+    Route::prefix('fees')->group(function () {
+    Route::get('/', [FeeController::class, 'index']);
+    Route::post('/', [FeeController::class, 'store']);
+    Route::put('/{fee}', [FeeController::class, 'update']);
+    Route::delete('/{fee}', [FeeController::class, 'destroy']);
+    });
+
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index']);
         Route::get('/all', [ProductController::class, 'list']);
@@ -93,9 +101,10 @@ Route::prefix('orders')->group(function () {
 
     Route::prefix('clients')->group(function () {
         Route::get('/', [ClientController::class, 'index']);
+        Route::get('/all', [ClientController::class, 'list']);
         Route::post('/', [ClientController::class, 'store']);
         Route::put('/{client}', [ClientController::class, 'update']);
-        Route::delete('/{client}', [ClientController::class, 'delete']);
+        Route::delete('/{client}', [ClientController::class, 'destroy']);
     });
 
 //});

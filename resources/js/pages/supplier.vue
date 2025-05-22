@@ -77,16 +77,28 @@ export default {
                     }
                 },
                 columns: [
-                    { data: 'id' },
-                    { data: 'supplier_name' },
-                    { data: 'supplier_city' },
-                    { data: 'supplier_zone' },
-                    {
-                        data: 'action',
-                        orderable: false,
-                        searchable: false,
-                    },
-                ],
+                { data: 'id' },
+                { data: 'supplier_name' },
+                { data: 'supplier_city' },
+                { data: 'supplier_zone' },
+                {
+                    data: 'id',
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row) {
+                        return `
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-warning edit-btn" data-id="${data}" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-btn" data-id="${data}" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                },
+            ],
                 createdRow(row, data) {
                     $(row).find('.edit-btn').on('click', function () {
                         vm.showEditModal(data);
@@ -97,8 +109,9 @@ export default {
                 },
             });
         },
+        // Rest of your methods remain the same
         refreshData() {
-            $('#supplierTable').DataTable().ajax.reload();
+            $('#supplierTable').DataTable().ajax.reload(null, false);
         },
         showCreateModal() {
             this.isEditMode = false;
@@ -116,18 +129,15 @@ export default {
         },
         async deleteSupplier() {
             try {
-                await axios.delete(`/api/suppliers/${this.selectedSupplier.id}`); // Changed from supplier_id
+                await axios.delete(`/api/suppliers/${this.selectedSupplier.id}`);
                 this.refreshData();
                 this.isDeleteModalVisible = false;
-                alert('Supplier deleted successfully!');
+                // alert('Supplier deleted successfully!');
             } catch (error) {
                 console.error("Error deleting supplier:", error);
                 alert("An error occurred while deleting the supplier.");
             }
-        },
-    refreshData() {
-        $('#supplierTable').DataTable().ajax.reload(null, false); // false keeps current pagination
-    }
+        }
     }
 };
 </script>

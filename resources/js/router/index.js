@@ -5,6 +5,7 @@ import login from "../pages/login.vue";
 import home from "../pages/home.vue";
 import role from "../pages/role.vue";
 import permission from "../pages/permission.vue";
+import fee from "../pages/fees.vue"; 
 import product from "../pages/product.vue";
 import supplier from "../pages/supplier.vue";
 import courrier from "../pages/courrier.vue";
@@ -36,6 +37,12 @@ const routes = [
         path: '/permissions',
         name: 'PermissionManagement',
         component: permission,
+        meta: { requiresAuth: true },
+    },
+    {
+        path: '/fees',
+        name: 'FeeManagement',
+        component: fee,
         meta: { requiresAuth: true },
     },
     {

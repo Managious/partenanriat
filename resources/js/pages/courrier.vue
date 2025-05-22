@@ -86,11 +86,17 @@ export default {
                 orderable: false,
                 searchable: false,
                 render: function(data, type, row) {
-                    return `
-                        <button class="btn btn-sm btn-primary edit-btn">Edit</button>
-                        <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-                    `;
-                }
+                        return `
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm btn-warning edit-btn" data-id="${data}" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-btn" data-id="${data}" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
             },
         ],
         createdRow(row, data) {
