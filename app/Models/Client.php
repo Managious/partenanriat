@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'client_name',
         'client_city',
@@ -17,7 +15,13 @@ class Client extends Model
         'client_email',
         'client_phone',
         'client_discount',
+        'partenaire_id',
         'created_by',
         'updated_by',
     ];
+
+    public function partenaire()
+    {
+        return $this->belongsTo(User::class, 'partenaire_id');
+    }
 }

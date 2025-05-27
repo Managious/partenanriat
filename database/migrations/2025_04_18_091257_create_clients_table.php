@@ -21,6 +21,7 @@ return new class extends Migration
              $table->string('client_email', 50)->nullable();
              $table->string('client_phone', 14)->nullable();
              $table->integer('client_discount')->default(0);
+             $table->integer('partenaire_id');
              $table->string('created_by')->nullable();
              $table->string('updated_by')->nullable();
              $table->timestamps();

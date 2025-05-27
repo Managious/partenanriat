@@ -40,6 +40,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/', [UserController::class, 'store']);
         Route::put('/{user}', [UserController::class, 'update']);
         Route::delete('/{user}', [UserController::class, 'destroy']);
+        Route::get('/partenaires', [UserController::class, 'getPartenaires']);
+
     });
 
     Route::prefix('profile')->group(function () {
