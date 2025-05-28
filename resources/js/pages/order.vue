@@ -1,7 +1,6 @@
 <template>
   <div class="container mt-4">
-
-    <!--  Product Panel -->
+    <!-- Product Panel -->
     <div class="mb-4">
       <ProductOrderPannel />
     </div>
@@ -49,21 +48,23 @@
   </div>
 </template>
 
-
 <script>
 import $ from 'jquery';
 import 'datatables.net-bs5';
 import deleteOrder from '../components/OrderManagement/deleteOrder.vue';
 import ProductOrderPannel from '../components/OrderManagement/ProductOrderPannel.vue';
+import OrderModal from '../components/OrderManagement/OrderModal.vue'
+
 
 export default {
-  components: {  deleteOrder,ProductOrderPannel},
+  components: { deleteOrder, ProductOrderPannel ,OrderModal},
   data() {
     return {
       isOrderModalVisible: false,
       isDeleteModalVisible: false,
       isEditMode: false,
       selectedOrder: null,
+      dataTableInstance: null,
     };
   },
   mounted() {
@@ -73,7 +74,7 @@ export default {
     initializeDataTable() {
       const vm = this;
 
-      $('#orderTable').DataTable({
+      const table = $('#orderTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -92,19 +93,27 @@ export default {
             orderable: false,
             searchable: false,
           },
-        ],
-        createdRow(row, data) {
-          $(row).find('.edit-btn').on('click', function () {
-            vm.showEditModal(data);
-          });
-          $(row).find('.delete-btn').on('click', function () {
-            vm.showDeleteModal(data);
-          });
-        },
+        ]
       });
+
+      // Event delegation for Edit button
+      $('#orderTable tbody').on('click', '.edit-btn', function () {
+        const rowData = table.row($(this).closest('tr')).data();
+        vm.showEditModal(rowData);
+      });
+
+      // Event delegation for Delete button
+      $('#orderTable tbody').on('click', '.delete-btn', function () {
+        const rowData = table.row($(this).closest('tr')).data();
+        vm.showDeleteModal(rowData);
+      });
+
+      this.dataTableInstance = table;
     },
     refreshData() {
-      $('#orderTable').DataTable().ajax.reload();
+      if (this.dataTableInstance) {
+        this.dataTableInstance.ajax.reload();
+      }
     },
     showCreateModal() {
       this.isEditMode = false;

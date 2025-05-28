@@ -41,6 +41,7 @@ const links = [
   { title: 'Clients', path: '/clients', icon: 'fas fa-users', permission: null },
   { title: 'Orders', path: '/orders', icon: 'fas fa-shopping-cart', permission: null },
   { title: 'Fees', path: '/fees', icon: 'fas fa-money-bill-wave', permission: null },
+   { title: 'ordertracking', path: '/orderTracking', icon: 'fas fa-route', permission: null },
 ];
 
 const filteredLinks = computed(() =>
