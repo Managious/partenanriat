@@ -1,58 +1,34 @@
 <template>
-  <div class="modal-overlay">
-    <div class="modal-container">
-      <div class="modal-header">
-        <h5>{{ isEditMode ? 'Edit Client' : 'Create Client' }}</h5>
-        <button class="close-btn" @click="$emit('close')">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form @submit.prevent="submitForm">
-        <div class="mb-3">
-          <label>Client Name</label>
-          <input type="text" v-model="form.client_name" class="form-control" required />
+  <div class="modal-overlay" @click="handleOutsideClick">
+    <div class="modal-dialog" @click.stop>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>{{ isEditMode ? 'Edit Client' : 'Add Client' }}</h5>
+          <button class="close" @click="$emit('close')">&times;</button>
         </div>
-        <div class="mb-3">
-          <label>City</label>
-          <input type="text" v-model="form.client_city" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label>Zone</label>
-          <input type="text" v-model="form.client_zone" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label>Type</label>
-          <input type="text" v-model="form.client_type" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label>Address</label>
-          <input type="text" v-model="form.client_address" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label>Email</label>
-          <input type="email" v-model="form.client_email" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label>Phone</label>
-          <input type="text" v-model="form.client_phone" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label>Discount</label>
-          <input type="number" v-model="form.client_discount" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label>Partenaire</label>
-          <select v-model="form.partenaire_id" class="form-control" required>
-            <option value="">Select a partenaire</option>
-            <option v-for="partenaire in partenaires" :key="partenaire.id" :value="partenaire.id">
-              {{ partenaire.name }}
-            </option>
-          </select>
-        </div>
-        <div class="d-flex justify-content-end">
-          <button type="button" class="btn btn-secondary me-2" @click="$emit('close')">Cancel</button>
-          <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
-        </div>
-      </form>
+        <form @submit.prevent="submitClient">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label>Name</label>
+              <input type="text" v-model="form.client_name" class="form-control" required />
+              <div v-if="errors.client_name" class="text-danger"><small>{{ errors.client_name[0] }}</small></div>
+            </div>
+
+            <div class="mb-3">
+              <label>City</label>
+              <input type="text" v-model="form.client_city" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+              <label>Zone</label>
+              <input type="text" v-model="form.client_zone" class="form-control" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">{{ isEditMode ? 'Update' : 'Create' }}</button>
+            <button class="btn btn-secondary" type="button" @click="$emit('close')">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -77,41 +53,29 @@ export default {
       form: {
         client_name: '',
         client_city: '',
-        client_zone: '',
-        client_type: '',
-        client_address: '',
-        client_email: '',
-        client_phone: '',
-        client_discount: 0,
-        partenaire_id: '',
+        client_zone: ''
       },
-      partenaires: [],
+      errors: {}
     };
   },
-  mounted() {
-    this.fetchPartenaires();
-    if (this.isEditMode && this.clientData) {
-      this.form = {
-        ...this.clientData
-      };
+  watch: {
+    clientData: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal) {
+          this.form = { ...newVal };
+        }
+      }
     }
   },
   methods: {
-    async fetchPartenaires() {
+    async submitClient() {
+      const url = this.isEditMode
+        ? `/api/clients/${this.clientData.client_id}`
+        : '/api/clients';
+      const method = this.isEditMode ? 'put' : 'post';
       try {
-        const response = await axios.get('/api/users/partenaires');
-        this.partenaires = response.data;
-      } catch (error) {
-        console.error('Error fetching partenaires:', error);
-      }
-    },
-    async submitForm() {
-      try {
-        if (this.isEditMode) {
-          await axios.put(`/api/clients/${this.clientData.id}`, this.form);
-        } else {
-          await axios.post('/api/clients', this.form);
-        }
+        await axios[method](url, this.form);
         this.$emit('refresh');
         this.$emit('close');
       } catch (error) {

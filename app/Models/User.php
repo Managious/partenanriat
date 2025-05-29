@@ -61,9 +61,4 @@ class User extends Authenticatable
     {
         return $this->getAllPermissions()->pluck('name')->contains($permissionName);
     }
-    // In User model
-public function clients()
-{
-    return $this->hasMany(Client::class, 'partenaire_id');
-}
 }

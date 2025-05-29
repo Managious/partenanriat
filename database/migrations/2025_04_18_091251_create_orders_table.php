@@ -29,6 +29,9 @@ return new class extends Migration
             $table->string('product_id',20);
             $table->float('product_sale_price');
             $table->float('product_discount_1');
+            $table->unsignedInteger('quantity')->default(1);
+            // created by , ordered by 
+
 
             $table->timestamps();
         });

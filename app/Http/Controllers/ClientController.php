@@ -12,10 +12,7 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $clients = Client::query()->with('partenaire');
-
-            return DataTables::of($clients)
-                ->addColumn('partenaire_name', fn($client) => $client->partenaire->name ?? '-')
+            return DataTables::of(Client::query())
                 ->addColumn('action', function ($client) {
                     return '
                         <button class="btn btn-sm btn-warning edit-btn"><i class="fas fa-edit"></i></button>

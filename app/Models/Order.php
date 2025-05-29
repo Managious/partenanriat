@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Client;
-use App\Models\Product;
 
 class Order extends Model 
 {
@@ -13,7 +11,6 @@ class Order extends Model
 
     protected $fillable = [
         'client_id',
-        'product_sale_price',
         'product_id',
         'product_sale_price',
         'product_discount_1',
@@ -34,28 +31,27 @@ class Order extends Model
 
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id', 'client_id');
+        return $this->belongsTo(\App\Models\Client::class, 'client_id', 'id');
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id', 'product_id');
+        return $this->belongsTo(\App\Models\Product::class, 'product_id', 'id');
     }
 
     protected static function boot()
-{
-    parent::boot();
+    {
+        parent::boot();
 
-    static::creating(function ($order) {
-        $order->invoice_number = time();
-        $order->invoice_date = now();
-        $order->invoice_nature = 'Standard';
-        $order->invoice_sale_point = 'Default Point';
-        $order->invoiced_by = auth()->check() ? auth()->user()->name : 'System';
-        $order->invoiced_on = now();
-        $order->ordered_by = auth()->check() ? auth()->user()->name : 'System';
-        $order->ordered_on = now();
-    });
-}
-
+        static::creating(function ($order) {
+            $order->invoice_number = time();
+            $order->invoice_date = now();
+            $order->invoice_nature = 'Standard';
+            $order->invoice_sale_point = 'Default Point';
+            $order->invoiced_by = auth()->check() ? auth()->user()->name : 'System';
+            $order->invoiced_on = now();
+            $order->ordered_by = auth()->check() ? auth()->user()->name : 'System';
+            $order->ordered_on = now();
+        });
+    }
 }

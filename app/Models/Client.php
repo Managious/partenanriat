@@ -15,13 +15,8 @@ class Client extends Model
         'client_email',
         'client_phone',
         'client_discount',
-        'partenaire_id',
         'created_by',
         'updated_by',
+        'partner_id',
     ];
-
-    public function partenaire()
-    {
-        return $this->belongsTo(User::class, 'partenaire_id');
-    }
 }

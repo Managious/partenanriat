@@ -14,9 +14,7 @@
                 <th>Name</th>
                 <th>City</th>
                 <th>Zone</th>
-                <th>Type</th>
-                <th>Partenaire</th>
-                <th>Action</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -72,8 +70,6 @@ export default {
           { data: 'client_name' },
           { data: 'client_city' },
           { data: 'client_zone' },
-          { data: 'client_type' },
-          { data: 'partenaire_name' },
           {
             data: 'action',
             orderable: false,
@@ -119,7 +115,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* Same as user.vue */
-</style>

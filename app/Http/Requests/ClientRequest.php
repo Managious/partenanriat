@@ -21,8 +21,7 @@ class ClientRequest extends FormRequest
             'client_address' => 'nullable|string|max:100',
             'client_email' => 'nullable|email|max:50',
             'client_phone' => 'nullable|string|max:14',
-            'client_discount' => 'nullable|integer',
-            'partenaire_id' => 'required|integer|exists:users,id',
+            'client_discount' => 'nullable|integer|min:0|max:100',
         ];
     }
 }

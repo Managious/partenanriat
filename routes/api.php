@@ -10,6 +10,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AuthController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,14 +26,37 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
+//--------------------------orders routes 
 Route::prefix('orders')->group(function () {
     Route::get('/', [OrdersController::class, 'index']);
     Route::post('/', [OrdersController::class, 'store']);
     Route::put('/{order}', [OrdersController::class, 'update']);
     Route::delete('/{order}', [OrdersController::class, 'destroy']);
     Route::post('/store-cart', [OrdersController::class, 'storeCart']);
+    Route::get('orders/list', [OrdersController::class, 'list']);
+    Route::get('/orders/tracking', [OrdersController::class, 'allOrdersForTracking']);
+
+
+
 });
+//-------------------------products routes 
+Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index']);
+        Route::get('/all', [ProductController::class, 'list']);
+        Route::get('/{product}', [ProductController::class, 'show']);
+        Route::post('/', [ProductController::class, 'store']);
+        Route::put('/{product}', [ProductController::class, 'update']);
+        Route::delete('/{product}', [ProductController::class, 'destroy']);
+    });
+
+//-------
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']); 
+
+
+
+//---------midlleware--------------------------
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('users')->group(function () {
@@ -75,15 +99,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/all', [FeeController::class, 'all']);
     });
 
-    Route::prefix('products')->group(function () {
-        Route::get('/', [ProductController::class, 'index']);
-        Route::get('/all', [ProductController::class, 'list']);
-        Route::get('/{product}', [ProductController::class, 'show']);
-        Route::post('/', [ProductController::class, 'store']);
-        Route::put('/{product}', [ProductController::class, 'update']);
-        Route::delete('/{product}', [ProductController::class, 'destroy']);
-    });
-
+  
     Route::prefix('suppliers')->group(function () {
         Route::get('/', [SupplierController::class, 'index']);
         Route::get('/all', [SupplierController::class, 'list']);

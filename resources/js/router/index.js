@@ -13,6 +13,7 @@ import client from "../pages/client.vue";
 import ProfileView from '../pages/ProfileView.vue';
 import user from "../pages/user.vue";
 import order from "../pages/order.vue";
+import OrderTracking from '../pages/orderTracking.vue';
 
 const routes = [
     {
@@ -85,6 +86,12 @@ const routes = [
         path: '/orders',
         name: 'OrderManagement', 
         component: order,
+        meta: { requiresAuth: true }, 
+    },
+     {
+        path: '/ordertracking',
+        name: 'ordertracking', 
+        component: OrderTracking,
         meta: { requiresAuth: true }, 
     },
 
