@@ -6,7 +6,7 @@
           style="min-height: 450px"
         >
           <img
-            src="C:\xampp\htdocs\partenanriat-main (1)\partenanriat-main\storage\app\public\template.png"
+            src="C:\Users\MSI DE MOHAMED\Herd\partenanriat\storage\template.png"
             alt="Template"
             class="img-fluid rounded mb-3"
             style="max-height: 140px; object-fit: contain;"
