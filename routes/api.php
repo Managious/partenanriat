@@ -72,6 +72,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/', [FeeController::class, 'store']);
     Route::put('/{fee}', [FeeController::class, 'update']);
     Route::delete('/{fee}', [FeeController::class, 'destroy']);
+    Route::get('/all', [FeeController::class, 'all']);
     });
 
     Route::prefix('products')->group(function () {

@@ -43,4 +43,9 @@ class FeeController extends Controller
         $fee->delete();
         return response()->json(['message' => 'Fee deleted successfully']);
     }
+
+    public function all()
+{
+    return Fee::all();
+}
 }
