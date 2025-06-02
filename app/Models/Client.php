@@ -19,4 +19,8 @@ class Client extends Model
         'updated_by',
         'partner_id',
     ];
+    public function partenaire()
+    {
+        return $this->belongsTo(User::class, 'partner_id');
+    }
 }

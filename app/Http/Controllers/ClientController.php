@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -47,5 +49,10 @@ class ClientController extends Controller
         $client->delete();
 
         return response()->json(['message' => 'Client deleted successfully']);
+ 
     }
+   
+
+
+
 }

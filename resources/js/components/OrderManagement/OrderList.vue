@@ -108,7 +108,7 @@ export default {
             orderable: false,
             searchable: false,
             render: function (data, type, row) {
-              return `<button class="btn btn-info btn-sm show-progress" data-id="${row.id}">Voir avancement</button>`;
+              return `<button class="btn btn-info btn-sm show-progress" data-id="${row.id}">Shipping status</button>`;
             }
           },
         ]
