@@ -65,6 +65,17 @@ class UserController extends Controller
 
         return response()->json(['message' => 'User deleted successfully']);
     }
+    public function getPartenaires()
+    {
+    // Ici, on utilise le nom minuscule "partner" comme dans ta base
+    $partnerRole = Role::where('name', 'partner')->first();
+
+    if (!$partnerRole) {
+        return response()->json([], 200);
+    }
+
+    $partenaires = User::where('role_id', $partnerRole->id)->get(['id', 'name']);
+    return response()->json($partenaires);
+    }
 
 }
-

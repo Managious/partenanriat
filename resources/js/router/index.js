@@ -14,7 +14,6 @@ import ProfileView from '../pages/ProfileView.vue';
 import user from "../pages/user.vue";
 import order from "../pages/order.vue";
 import OrderTracking from '../pages/orderTracking.vue';
-
 const routes = [
     {
         path: '/login',
@@ -23,9 +22,9 @@ const routes = [
         meta: { guest: true }
     },
     {
-        path: '/',
-        name: 'Home',
-        component: home, 
+        path: '/dashboard',
+        name:'dashboard',
+       component: () => import('../pages/dashboard.vue'), 
         meta: { requiresAuth: true },
     },
     {
@@ -94,6 +93,7 @@ const routes = [
         component: OrderTracking,
         meta: { requiresAuth: true }, 
     },
+  
 
 ];
 
